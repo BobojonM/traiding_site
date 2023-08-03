@@ -1,15 +1,22 @@
 import userService from "../services/user-service.mjs";
+import { validationResult } from "express-validator";
+import ApiError from "../exceptions/api-errors.mjs";
 
 
 class UserController{
     async registerUser(req, res, next){
         try{
+            const errors = validationResult(req);
+            console.log(errors.array());
+            if(!errors.isEmpty()){
+                return next(ApiError.BadRequest('Validation Error', errors.array()));
+            }
             const {email, password} = req.body;
             const userData = await userService.registration(email, password);
             res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
             return res.json(userData);
         }catch(e){
-            console.log(e);
+            next(e);
         }
     }
 
@@ -17,7 +24,7 @@ class UserController{
         try{
 
         }catch(e){
-            
+            next(e);
         }
     }
 
@@ -25,15 +32,17 @@ class UserController{
         try{
 
         }catch(e){
-            
+            next(e);
         }
     }
 
     async activateUser(req, res, next){
         try{
-
+            const link = req.params.link;
+            await userService.activate(link);
+            return res.redirect(process.env.CLIENT_URL);
         }catch(e){
-            
+            next(e);
         }
     }
 
@@ -41,7 +50,7 @@ class UserController{
         try{
 
         }catch(e){
-            
+            next(e);
         }
     }
 
@@ -49,7 +58,7 @@ class UserController{
         try{
             res.json(['123', 'test']);
         }catch(e){
-            res.json(e);
+            next(e);
         }
     }
 }
