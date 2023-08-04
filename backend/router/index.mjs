@@ -8,7 +8,10 @@ router.post('/registration',
     body('email').isEmail(),
     userController.registerUser
 );
-router.post('/login', userController.loginUser);
+router.post('/login', 
+    body('email').isEmail(),
+    userController.loginUser
+);
 router.post('/logout', userController.logoutUser);
 router.get('/activate/:link', userController.activateUser);
 router.get('/refresh', userController.refreshUser);

@@ -36,6 +36,50 @@ class UserService {
         user.isActivated = true;
         await user.save();
     }
+
+    async loginUser(email, password){
+        const candidate = await userModel.findOne({email});
+        if(!candidate){
+            throw ApiError.BadRequest(`User ${email} is not registrered`);
+        }
+        const isPassword = await bcrypt.compare(password, candidate.password);
+        if(!isPassword){
+            throw ApiError.BadRequest('Incorrect password');
+        }
+        const userDto = new UserDto(candidate);
+        const tokens = tokenService.generateToken({ ...userDto });
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+        return {
+            ...tokens,
+            user: userDto
+        };
+    }
+
+    async logoutUser(refreshToken){
+        const token = await tokenService.removeToken(refreshToken);
+        return token;
+    }
+
+    async refresh(refreshToken){
+        if(!refreshToken){
+            throw ApiError.UnauthorizedError();
+        }
+        const userData = tokenService.validateRefreshToken(refreshToken);
+        const tokenFromDB = tokenService.findToken(refreshToken);
+        if(!userData || !tokenFromDB){
+            throw ApiError.UnauthorizedError();
+        }
+        const user = userModel.findById(userData.id);
+        const userDto = new UserDto(user);
+        const tokens = tokenService.generateToken({ ...userDto });
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+        return {
+            ...tokens,
+            user: userDto
+        };
+    }
 }
 
 export default new UserService();
