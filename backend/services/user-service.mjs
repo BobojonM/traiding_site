@@ -80,6 +80,11 @@ class UserService {
             user: userDto
         };
     }
+
+    async getUsers(){
+        const users = userModel.find();
+        return users;
+    }
 }
 
 export default new UserService();
