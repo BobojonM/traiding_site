@@ -1,4 +1,3 @@
-// authService.js
 import AuthServise from "../servises/AuthService";
 import { useDispatch } from "react-redux";
 import { setAuth, setLoading, setUser } from "../store/stateSlice";
@@ -38,7 +37,7 @@ const useAuth = () => {
     } catch(e: any) {
       console.log(e.response?.data?.message);
     }finally{
-      setLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
@@ -60,7 +59,6 @@ const useAuth = () => {
     dispatch(setLoading(true));
     try{
       const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, {withCredentials: true});
-      console.log(response);
       
       localStorage.setItem('token', response.data.accessToken);
       dispatch(setAuth(true));
