@@ -1,40 +1,12 @@
 import { FC, useState } from "react";
-import { useDispatch} from "react-redux";
-import AuthServise from "../servises/AuthService";
-import { setAuth, setUser } from "../store/stateSlice";
+import useAuth from "../hooks/useAuth";
 
 const LoginForm: FC = () => {
-    const dispatch = useDispatch();
+    const {login, register} = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const login = async(email: string, password: string) => {
-        try{
-            const response = await AuthServise.login(email, password);
-            console.log(response);
-            
-            localStorage.setItem('token', response.data.accessToken);
-            dispatch(setAuth(true));
-            dispatch(setUser(response.data.user));
-        }catch{
-            console.log('Some error happened');   
-        }
-    }
-
-    const register = async(email: string, password: string) => {
-        try{
-            const response = await AuthServise.registration(email, password);
-            console.log(response);
-
-            localStorage.setItem('token', response.data.accessToken);
-            dispatch(setAuth(true));
-            dispatch(setUser(response.data.user));
-        }catch{
-            console.log('Some error happened');   
-        }
-    }
-
+    
     return(
         <div>
             <input type="text"

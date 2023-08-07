@@ -5,18 +5,23 @@ const stateSlice = createSlice({
     name: 'toolkit',
     initialState: {
         user: {} as IUser,
-        isAuth: false
+        isAuth: false,
+        isLoading: false
     },
     reducers: {
         setAuth: (state, action) => {
-            state.isAuth = action.payload
+            state.isAuth = action.payload;
         },
 
         setUser: (state, action) => {
-            state.user = action.payload
+            state.user = action.payload;
+        }, 
+
+        setLoading: (state, action) => {
+            state.isLoading = action.payload;
         }
     }
 })
 
 export default stateSlice.reducer;
-export const {setAuth, setUser} = stateSlice.actions;
+export const {setAuth, setUser, setLoading} = stateSlice.actions;
