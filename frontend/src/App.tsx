@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import LoginForm from './components/LoginForm'
+import LoginForm from './components/LoginForm/LoginForm'
 import useAuth from './hooks/useAuth'
 import { useSelector } from 'react-redux'
 import RootState from './models/RootState'
@@ -40,9 +40,10 @@ function App() {
   if(!isAuth){
     return(
       <>
+        <div className='login'>
+        </div>
         <LoginForm/>
       </>
-
     )
   }else{
     return (
