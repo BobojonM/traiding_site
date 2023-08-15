@@ -50,3 +50,15 @@
     justify-content: center;
     gap: 50px;
 }
+
+@media screen and (max-width: 480px) {
+    .authContent{
+        width: 95%;
+    }
+
+    .buttons{
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+}
