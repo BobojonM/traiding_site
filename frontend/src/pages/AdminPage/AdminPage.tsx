@@ -1,14 +1,31 @@
-// import styles from './AdminPage.module.css'
+import styles from './AdminPage.module.css'
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import Userbar from "../../components/Userbar/Userbar";
-import NavBar from "./AdminComponents/NavBar/NavBar";
+import NavBar, { Section } from "./AdminComponents/NavBar/NavBar";
+import Rules from "./AdminComponents/Rules/Rules";
+
+
 
 const AdminPage: FC = () => {
+    const [selectedSection, setSelectedSection] = useState<Section | null>({
+        name: 'rules',
+        val: 'Правила'
+    });
+
+    const handleSectionSelection = (section: Section) => {
+        setSelectedSection(section);
+    }
+
     return(
-        <div>
+        <div className={styles.page}>
             <Userbar/>
-            <NavBar/>
+            <NavBar onButtonClick={handleSectionSelection}/>
+            <div>
+                {selectedSection && (
+                    <Rules></Rules>
+                )}
+            </div>
         </div>
     )
 }

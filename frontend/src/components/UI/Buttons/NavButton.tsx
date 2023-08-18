@@ -10,7 +10,7 @@ const NavButton: FC<NavButtonProps> = ({action, children, isActive}) => {
     const buttonClassName = isActive ? `${styles.nav} ${styles.nav_act}` : styles.nav;
 
     return(
-        <button className={buttonClassName} onClick={() => action}>
+        <button className={buttonClassName} onClick={action}>
             {children}
         </button>
     )
