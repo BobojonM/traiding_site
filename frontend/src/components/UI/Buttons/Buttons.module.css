@@ -1,0 +1,33 @@
+.authButton{
+    padding: 10px 30px;
+    border-radius: 5px;
+    background-color: #5D5FEF;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.authButton:hover{
+    background-color: #5b5ddb;
+}
+
+.nav{
+    background-color: transparent;
+    padding: 10px 30px;
+    border-radius: 5px;
+    border: 1px solid rgb(100, 100, 100);
+    cursor: pointer;
+}
+
+.nav.nav_act{
+    background-color: #5D5FEF;
+}
+
+.nav:hover{
+    border: 1px solid transparent;
+    text-decoration: underline;
+    font-size: 0.9em;
+}
+

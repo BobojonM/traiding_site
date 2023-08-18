@@ -1,0 +1,22 @@
+.navigation{
+    width: calc(100% - 320px);
+}
+
+.navigation ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+  
+.navigation a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.navigation a:hover {
+    text-decoration: underline;
+}

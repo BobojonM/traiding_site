@@ -1,12 +1,12 @@
 import { FC, ReactNode, MouseEventHandler } from "react";
-import styles from "./AuthButton.module.css"
+import styles from "./Buttons.module.css"
 
-interface AuthButtonProps {
+export interface ButtonProps {
     action: MouseEventHandler<HTMLButtonElement>;
     children: ReactNode;
   }
 
-const AuthButton: FC<AuthButtonProps> = ({action, children}) => {
+const AuthButton: FC<ButtonProps> = ({action, children}) => {
     return(
         <button className={styles.authButton} onClick={action}>
             {children}

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import RootState from './models/RootState'
 import { IUser } from './models/IUser'
 import UserService from './servises/UsersServise'
+import AdminPage from './pages/AdminPage/AdminPage'
 
 function App() {
   const isAuth = useSelector((state: RootState) => state.toolkit.isAuth);
@@ -48,7 +49,7 @@ function App() {
   }else{
     return (
       <>
-        <h1>{isAuth ? `User ${user.email} is loged in` : 'User is not loged in'}</h1>
+        {/* <h1>{isAuth ? `User ${user.email} is loged in` : 'User is not loged in'}</h1>
         <h3>{user.isActivated ? 'Account is activated' : 'You better activate your account'}</h3>
         <button onClick={() => logout()}>Exit</button>
         <div>
@@ -57,7 +58,8 @@ function App() {
 
         {users.map(user => 
           <div key={user.email}>{user.email}</div>  
-        )}
+        )} */}
+        <AdminPage/>
       </>
     )
   }
