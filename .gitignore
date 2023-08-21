@@ -1,7 +1,8 @@
 /backend/node_modules
 /frontend/node_modules
 
-backend/.env
+/backend/.env
+/backend/*.sql
 
 /frontend/logs
 /frontend/*.log
