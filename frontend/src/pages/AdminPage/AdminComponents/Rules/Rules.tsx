@@ -5,6 +5,7 @@ import RuleService from "../../../../servises/RuleService";
 import RegularButton from "../../../../components/UI/Buttons/RegularButton";
 import RulesDetail from "./RulesDetail";
 
+
 const Rules: FC = () => {
     const [rules, setRules] = useState<IRule[]>([]);
     const [menu, setMenu] = useState<string[]>(['Все']);

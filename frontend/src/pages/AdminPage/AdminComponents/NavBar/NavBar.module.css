@@ -20,3 +20,45 @@
 .navigation a:hover {
     text-decoration: underline;
 }
+
+/* NavBar.module.css */
+
+/* Styles for the modal wrapper */
+.modalWrapper {
+    position: relative; /* Change to relative positioning */
+  }
+  
+  /* Styles for the modal */
+  .modal {
+    position: absolute;
+    top: 100%; /* Position below the button */
+    left: 50%;
+    background-color: #292929;
+    border-radius: 10px;
+    box-shadow: 5px 10px 8px rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    width: 400px;
+    z-index: 1000;
+    margin-top: 8px;
+    white-space: nowrap;
+  }
+  
+  /* Styles for the modal list */
+  .modalList {
+    padding: 0;
+    justify-content: space-between; 
+    flex-wrap: wrap; 
+  }
+
+  .modalList li {
+    cursor: pointer;
+    padding: 4%;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+  }
+  
+  /* Highlight the selected item */
+  .modalList li:hover {
+    text-decoration: underline;
+  }
+  

@@ -81,6 +81,31 @@ class RulesController {
         }
     }
     
+
+    async getTrendsByTimeframe(req, res){
+        try{
+            const timeframe = req.params.timeframe;
+            const query = `
+            SELECT trendid, longs, shorts, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp,
+                timeframe, candle_num, candle_color, rlong, along, blong, bfly, rshort, ashort, bshort, 
+                gfly, total_long, total_short
+            FROM public.trends
+            WHERE timeframe = $1
+            ORDER BY timestamp DESC
+            LIMIT 100
+            `
+            const result = await pool.query(query, [timeframe]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error toggling status:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
     
 }
 

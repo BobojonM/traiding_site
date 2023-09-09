@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import Userbar from "../../components/Userbar/Userbar";
 import NavBar, { Section } from "./AdminComponents/NavBar/NavBar";
 import Rules from "./AdminComponents/Rules/Rules";
+import Trends from './AdminComponents/Trends/Trends';
 
 
 
@@ -12,19 +13,24 @@ const AdminPage: FC = () => {
         name: 'rules',
         val: 'Правила'
     });
+    const [selectedTimeframe, setSelectedTimeframe] = useState<Section>({name: '', val: ''});
 
-    const handleSectionSelection = (section: Section) => {
+    const handleSectionSelection = (section: Section, timeframe: Section) => {
+        if(timeframe){
+            setSelectedTimeframe(timeframe);
+        }
+        
         setSelectedSection(section);
     }
 
     return(
         <div className={styles.page}>
             <Userbar/>
-            <NavBar onButtonClick={handleSectionSelection}/>
+            <NavBar onButtonClick={(section, timeframe) => handleSectionSelection(section, timeframe)}/>
             <div>
-                {selectedSection && (
+                {selectedSection?.name === 'rules' ? (
                     <Rules></Rules>
-                )}
+                ): <Trends timeframe={selectedTimeframe}></Trends>}
             </div>
         </div>
     )

@@ -1,0 +1,45 @@
+.trends{
+    width: 95%;
+    background-color: #3b3b3b;
+    min-height: 80vh;
+    text-align: center;
+    border-radius: 30px;
+    padding: 1%;
+    margin: 0 auto;
+}
+
+.trendTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    font-size: .8em;
+}
+
+.trendTable th,
+.trendTable td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.trendTable th {
+    background-color: #575757;
+}
+
+.trendTable tr:nth-child(even) {
+    background-color: #575757;
+}
+
+.coloredSquare {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    border-radius: 2px;
+}
+  
+.subtable li{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+}

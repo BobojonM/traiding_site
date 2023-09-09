@@ -28,5 +28,8 @@ router.put('/rules/status/:id', rulesController.changeStatus);
 // Singals for rules
 router.get('/rules/signals/:name', rulesController.getSignalsForRule);
 
+// Get Trends
+router.get('/trends/:timeframe', rulesController.getTrendsByTimeframe); 
+
 
 export default router;
