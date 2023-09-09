@@ -1,4 +1,4 @@
-.authButton{
+.authButton, .regular{
     padding: 10px 30px;
     border-radius: 5px;
     background-color: #5D5FEF;
@@ -9,7 +9,11 @@
     cursor: pointer;
 }
 
-.authButton:hover{
+.regular{
+    padding: 5px 15px;
+}
+
+.authButton:hover, .regular:hover{
     background-color: #5b5ddb;
 }
 

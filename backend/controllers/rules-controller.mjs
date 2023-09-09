@@ -55,6 +55,31 @@ class RulesController {
             res.status(500).json({ message: 'An error occurred' });
         }
     }
+
+
+    // Controllers to get signals by the rule
+    async getSignalsForRule(req, res){
+        try{
+            const ruleName = req.params.name;
+            const query = `
+            SELECT signalid, tradingpair, timeframe, rule, data, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
+            FROM public.signals
+            WHERE rule = $1
+            ORDER BY timestamp DESC
+            LIMIT 100
+            `
+            const result = await pool.query(query, [ruleName]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Rule not found' });
+            }
+        } catch (error) {
+            console.error('Error toggling status:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
     
     
 }
