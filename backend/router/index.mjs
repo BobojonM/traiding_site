@@ -31,5 +31,8 @@ router.get('/rules/signals/:name', rulesController.getSignalsForRule);
 // Get Trends
 router.get('/trends/:timeframe', rulesController.getTrendsByTimeframe); 
 
+// Get Connections
+router.get('/connections/:timeframe/:type', rulesController.getConnections);
+
 
 export default router;

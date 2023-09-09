@@ -3,6 +3,7 @@ import { IRule } from "../models/IRule";
 import $api from "../http";
 import { IRuleSignal } from "../models/IRuleSignal";
 import { ITrend } from "../models/ITrend";
+import { ICombination } from "../models/ICombination";
 
 export default class RuleService{
     static async getRules(): Promise<AxiosResponse<IRule[]>>{
@@ -18,6 +19,10 @@ export default class RuleService{
     }
 
     static async getTrends(timeframe: string): Promise<AxiosResponse<ITrend[]>>{
-        return $api.get<ITrend[]>(`/trends/${timeframe}`)
+        return $api.get<ITrend[]>(`/trends/${timeframe}`);
+    }
+
+    static async getConnections(timeframe: string, type: string): Promise<AxiosResponse<ICombination[]>>{
+        return $api.get<ICombination[]>(`/connections/${timeframe}/${type}`);
     }
 }

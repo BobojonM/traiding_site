@@ -76,7 +76,7 @@ class RulesController {
                 res.status(404).json({ message: 'Rule not found' });
             }
         } catch (error) {
-            console.error('Error toggling status:', error);
+            console.error('Error getting signals:', error);
             res.status(500).json({ message: 'An error occurred retrieving the data' });
         }
     }
@@ -102,7 +102,33 @@ class RulesController {
                 res.status(404).json({ message: 'Not found' });
             }
         } catch (error) {
-            console.error('Error toggling status:', error);
+            console.error('Error getting trends:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async getConnections(req, res){
+        try{
+            const timeframe = req.params.timeframe;
+            const type = req.params.type;
+            const query = `
+            SELECT connectid, tradingpair, data, 
+                to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
+            FROM public.connections
+            WHERE timeframe = $1
+            AND type = $2
+            ORDER BY timestamp DESC
+            LIMIT 100
+            `
+            const result = await pool.query(query, [timeframe, type]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting connections:', error);
             res.status(500).json({ message: 'An error occurred retrieving the data' });
         }
     }

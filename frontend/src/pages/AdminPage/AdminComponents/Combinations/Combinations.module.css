@@ -1,0 +1,64 @@
+.combinations{
+    width: 95%;
+    background-color: #3b3b3b;
+    min-height: 80vh;
+    text-align: center;
+    border-radius: 30px;
+    padding: 1%;
+    margin: 0 auto;
+}
+
+.combTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    font-size: .8em;
+}
+
+.combTable th,
+.combTable td {
+    border-bottom: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.combTable th {
+    background-color: #575757;
+}
+
+.combTable tr:nth-child(even) {
+    background-color: #575757;
+}
+
+.menu{
+    display: flex;
+    width: 60%;
+    list-style-type: none;
+    margin: 0 auto;
+    justify-content: space-around;
+    padding: 2%;   
+}
+
+.menu li{
+    cursor: pointer;
+    padding: 1% 5%;
+}
+
+.menu li:hover{
+    outline: 1px solid white;
+    outline-offset: -1px;
+    border-radius: 10px;
+}
+
+.menu_active{
+    border-radius: 10px;
+    background-color: rgb(126, 126, 126);
+}
+
+.list {
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    border-bottom: 4px dotted rgb(175, 175, 175);
+}
