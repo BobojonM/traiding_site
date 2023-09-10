@@ -7,6 +7,7 @@ import RootState from './models/RootState'
 import { IUser } from './models/IUser'
 import UserService from './servises/UsersServise'
 import AdminPage from './pages/AdminPage/AdminPage'
+import Userbar from './components/Userbar/Userbar'
 
 function App() {
   const isAuth = useSelector((state: RootState) => state.toolkit.isAuth);
@@ -59,7 +60,14 @@ function App() {
         {users.map(user => 
           <div key={user.email}>{user.email}</div>  
         )} */}
-        <AdminPage/>
+        {user.isAdmin ? <AdminPage/> : (
+          <div>
+            <Userbar/>
+            <h1>Здесь будет страница для обычных пользователей</h1>
+          </div>
+
+        )}
+        
       </>
     )
   }
