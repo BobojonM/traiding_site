@@ -132,6 +132,25 @@ class RulesController {
             res.status(500).json({ message: 'An error occurred retrieving the data' });
         }
     }
+
+    async getTradingPairs(req, res){
+        try{
+            const query = `
+            SELECT * FROM public.tradingpairs
+            ORDER BY tradingpairid ASC 
+            `
+            const result = await pool.query(query);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting trading pairs:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
     
 }
 

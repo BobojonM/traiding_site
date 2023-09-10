@@ -6,6 +6,7 @@ import NavBar, { Section } from "./AdminComponents/NavBar/NavBar";
 import Rules from "./AdminComponents/Rules/Rules";
 import Trends from './AdminComponents/Trends/Trends';
 import Combinations from './AdminComponents/Combinations/Combinations';
+import Pairs from './AdminComponents/Pairs/Pairs';
 
 
 
@@ -33,6 +34,8 @@ const AdminPage: FC = () => {
                     <Rules></Rules>
                 ) : selectedSection?.name === 'comb' ? (
                     <Combinations></Combinations>
+                ) : selectedSection?.name === 'pairs' ? (
+                    <Pairs></Pairs>
                 ) : <Trends timeframe={selectedTimeframe}></Trends>}
             </div>
         </div>

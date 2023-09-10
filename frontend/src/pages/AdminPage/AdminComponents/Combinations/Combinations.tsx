@@ -73,12 +73,21 @@ const Combinations: FC = () => {
 
     useEffect(() => {
         getConnections();
-    }, [active]);
+        // Set up a timer to fetch signals every minute
+        const fetchInterval = setInterval(() => {
+            getConnections();
+        }, 600000);
+
+        // Clean up the timer when the component unmounts
+        return () => {
+            clearInterval(fetchInterval);
+        };
+}, [active]);
 
     return (
         <div className={styles.combinations}>
 
-            <h1>Правила</h1>
+            <h1>Совмещения</h1>
             <ul className={styles.menu}>
                 {menu.map((elem: CombinationsMenu, index: number) => (
                     <li key={elem.name}

@@ -14,8 +14,6 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
   const getTrends = async (timeframe: string) => {
     try {
       const response = (await RuleService.getTrends(timeframe)).data;
-      console.log(response);
-
       setTrends(response);
     } catch (e: any) {
       console.log(e);
@@ -23,7 +21,26 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
   }
 
   useEffect(() => {
-    getTrends(timeframe.val)
+    getTrends(timeframe.val);
+
+    if(timeframe.val === '15m'){
+      const fetchInterval = setInterval(() => {
+        getTrends(timeframe.val);
+      }, 600000);
+
+      return () => {
+          clearInterval(fetchInterval);
+      };
+    }
+    if (timeframe.val === '1h') {
+      const fetchInterval = setInterval(() => {
+        getTrends(timeframe.val);
+      }, 1500000);
+
+      return () => {
+          clearInterval(fetchInterval);
+      };
+    }
   }, [timeframe])
 
   return (

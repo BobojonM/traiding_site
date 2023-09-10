@@ -27,6 +27,10 @@ const buttons: Section[] = [
     {
         name: 'comb',
         val: 'Совмещения'
+    },
+    {
+        name: 'pairs',
+        val: 'Монеты'
     }
 ];
 
