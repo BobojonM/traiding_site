@@ -37,6 +37,10 @@ export default class RuleService{
         return $api.get<ITradingPair[]>(`/tradingpairs/`);
     }
 
+    static async getTopTradingPairs(): Promise<AxiosResponse<ITradingPair[]>>{
+        return $api.get<ITradingPair[]>(`/tradingpairs/top/`);
+    }
+
     static async getLevarages(): Promise<AxiosResponse<ILevarage[]>>{
         return $api.get<ILevarage[]>(`/settings/levarages/`);
     }

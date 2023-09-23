@@ -3,4 +3,7 @@ export interface ITradingPair{
     tradingpairname: string
     future: boolean
     spot: boolean
+    price: number
+    change: number
+    changepercent: number
 }

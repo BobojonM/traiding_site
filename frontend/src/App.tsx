@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import './App.css'
 import LoginForm from './components/LoginForm/LoginForm'
 import useAuth from './hooks/useAuth'
 import { useSelector } from 'react-redux'
 import RootState from './models/RootState'
-import { IUser } from './models/IUser'
-import UserService from './servises/UsersServise'
 import AdminPage from './pages/AdminPage/AdminPage'
 import Userbar from './components/Userbar/Userbar'
 
@@ -13,9 +11,8 @@ function App() {
   const isAuth = useSelector((state: RootState) => state.toolkit.isAuth);
   const isLoading = useSelector((state: RootState) => state.toolkit.isLoading);
   const user = useSelector((state: RootState) => state.toolkit.user);
-  const {checkAuth, logout} = useAuth();
-  const [users, setUsers] = useState<IUser[]>([]);
-  // console.log(user);
+  const {checkAuth} = useAuth();
+  // const [users, setUsers] = useState<IUser[]>([]);
   
   
   
@@ -25,14 +22,14 @@ function App() {
     }
   }, []);
 
-  const getUsers = async () => {
-    try{
-      const response = await UserService.fetchUsers();
-      setUsers(response.data);
-    }catch(e: any){
-      console.log(e);
-    }
-  }
+  // const getUsers = async () => {
+  //   try{
+  //     const response = await UserService.fetchUsers();
+  //     setUsers(response.data);
+  //   }catch(e: any){
+  //     console.log(e);
+  //   }
+  // }
 
 
   if(isLoading){
@@ -62,7 +59,7 @@ function App() {
         )} */}
         {user.isAdmin ? <AdminPage/> : (
           <div>
-            <Userbar/>
+            <Userbar openSetting={() => {}}/>
             <h1>Здесь будет страница для обычных пользователей</h1>
           </div>
 

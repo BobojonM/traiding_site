@@ -8,6 +8,7 @@ import Trends from './AdminComponents/Trends/Trends';
 import Combinations from './AdminComponents/Combinations/Combinations';
 import Pairs from './AdminComponents/Pairs/Pairs';
 import Settings from './AdminComponents/Settings/Settings';
+import Dumps from './AdminComponents/Dumps/Dumps';
 
 const AdminPage: FC = () => {
     const [selectedSection, setSelectedSection] = useState<Section | null>({
@@ -42,6 +43,8 @@ const AdminPage: FC = () => {
                     <Combinations></Combinations>
                 ) : selectedSection?.name === 'pairs' ? (
                     <Pairs></Pairs>
+                ) : selectedSection?.name === 'dump-pump' ? (
+                   <Dumps />
                 ) : <Trends timeframe={selectedTimeframe}></Trends>}
             </div>
         </div>
