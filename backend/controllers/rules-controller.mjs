@@ -88,7 +88,7 @@ class RulesController {
             const query = `
             SELECT trendid, longs, shorts, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp,
                 timeframe, candle_num, candle_color, rlong, along, blong, bfly, rshort, ashort, bshort, 
-                gfly, total_long, total_short
+                gfly, total_long, total_short, data
             FROM public.trends
             WHERE timeframe = $1
             ORDER BY timestamp DESC
@@ -103,6 +103,25 @@ class RulesController {
             }
         } catch (error) {
             console.error('Error getting trends:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async getSignalsForTrends(req, res) {
+        try {
+            const {ids} = req.body;
+            const query = `SELECT * FROM signals	
+            WHERE signalid in (${ids.join(',')})
+            order by signalid`;
+
+            const result = await pool.query(query);
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting connections:', error);
             res.status(500).json({ message: 'An error occurred retrieving the data' });
         }
     }

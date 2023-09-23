@@ -5,39 +5,51 @@ import { IRuleSignal } from "../../../../models/IRuleSignal";
 
 interface RulesDetail{
     ruleName: string;
+    forTrends?: boolean
+    signalIds?: number[]
 }
 
-const RulesDetail: FC<RulesDetail> = ({ruleName}) => {
+const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = []}) => {
     const [signals, setSignals] = useState<IRuleSignal[]>([]);
 
-    const getSignals = async(ruleName: string) => {
+    const getSignals = async() => {
         try{
             const response = (await RuleService.getSignals(ruleName)).data;
-            
-            setSignals(response);
-
+            setSignals([...response]);
         }catch(e: any){
             console.error(e);
           }
-    }
+    };
+
+    const getSignalsForTrends = async() => {
+        if (signalIds.length > 0) {
+            try {
+                const response = (await RuleService.getSignalsForTrends(signalIds)).data;
+                setSignals([...response]);
+            } catch(e: any){
+                console.error(e);
+            }
+        }
+    };
 
     useEffect(() => {
-        // Initial fetch when the component mounts
-        getSignals(ruleName);
-
-        // Set up a timer to fetch signals every minute
-        const fetchInterval = setInterval(() => {
-            getSignals(ruleName);
-        }, 60000);
-
-        // Clean up the timer when the component unmounts
-        return () => {
-            clearInterval(fetchInterval);
-        };
-    }, [ruleName]);
+        if (!forTrends){
+            getSignals();
+            const fetchInterval = setInterval(() => {
+                getSignals();
+            }, 60000);
+            return () => {
+                clearInterval(fetchInterval);
+            };
+        } else {
+            getSignalsForTrends();
+        }
+    }, [ruleName, forTrends]);
 
     return(
-        <table className={styles.ruleTable}>
+        <>
+        {signals.length > 0 ? (
+            <table className={styles.ruleTable}>
             <thead>
                 <tr>
                     <th>Traiding Pair</th>
@@ -58,6 +70,11 @@ const RulesDetail: FC<RulesDetail> = ({ruleName}) => {
                     ))}
             </tbody>
         </table>
+        ) : (
+            <h1>Сигналы не найдены</h1>
+        )}
+        </>
+        
     )
 }
 

@@ -6,6 +6,7 @@ const stateSlice = createSlice({
     initialState: {
         user: {} as IUser,
         isAuth: false,
+        isAdmin: false,
         isLoading: false
     },
     reducers: {

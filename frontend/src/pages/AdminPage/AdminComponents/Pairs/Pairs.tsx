@@ -30,7 +30,7 @@ const Pairs: FC = () => {
                 <thead>
                     <tr>
                         <th>Монета</th>
-                        <th>Future</th>
+                        <th>Futures</th>
                         <th>Spot</th>
                     </tr>
                 </thead>

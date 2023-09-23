@@ -23,6 +23,10 @@ export default class RuleService{
         return $api.get<ITrend[]>(`/trends/${timeframe}`);
     }
 
+    static async getSignalsForTrends(data: number[]): Promise<AxiosResponse<IRuleSignal[]>>{
+        return $api.post<IRuleSignal[]>(`/trends/signals`, {ids: data});
+    }
+
     static async getConnections(timeframe: string, type: string): Promise<AxiosResponse<ICombination[]>>{
         return $api.get<ICombination[]>(`/connections/${timeframe}/${type}`);
     }

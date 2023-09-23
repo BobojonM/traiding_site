@@ -15,4 +15,5 @@ export interface ITrend{
     bfly: string
     total_long: string
     total_short: string
+    data: string
 }
