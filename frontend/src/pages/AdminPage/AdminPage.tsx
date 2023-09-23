@@ -7,8 +7,7 @@ import Rules from "./AdminComponents/Rules/Rules";
 import Trends from './AdminComponents/Trends/Trends';
 import Combinations from './AdminComponents/Combinations/Combinations';
 import Pairs from './AdminComponents/Pairs/Pairs';
-
-
+import Settings from './AdminComponents/Settings/Settings';
 
 const AdminPage: FC = () => {
     const [selectedSection, setSelectedSection] = useState<Section | null>({
@@ -16,21 +15,28 @@ const AdminPage: FC = () => {
         val: 'Правила'
     });
     const [selectedTimeframe, setSelectedTimeframe] = useState<Section>({name: '', val: ''});
+    const [showSettings, setShowSettings] = useState(false);
 
     const handleSectionSelection = (section: Section, timeframe: Section) => {
         if(timeframe){
             setSelectedTimeframe(timeframe);
         }
-        
+        setShowSettings(false);
         setSelectedSection(section);
+    };
+
+    const openSettings = () => {
+        setShowSettings(true);
     }
 
     return(
         <div className={styles.page}>
-            <Userbar/>
+            <Userbar openSetting={openSettings}/>
             <NavBar onButtonClick={(section, timeframe) => handleSectionSelection(section, timeframe)}/>
             <div>
-                {selectedSection?.name === 'rules' ? (
+                {showSettings ? (
+                    <Settings/>
+                ) : selectedSection?.name === 'rules' ? (
                     <Rules></Rules>
                 ) : selectedSection?.name === 'comb' ? (
                     <Combinations></Combinations>

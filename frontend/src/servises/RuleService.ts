@@ -5,6 +5,8 @@ import { IRuleSignal } from "../models/IRuleSignal";
 import { ITrend } from "../models/ITrend";
 import { ICombination } from "../models/ICombination";
 import { ITradingPair } from "../models/ITradingPair";
+import { ILevarage } from "../models/ILevarage";
+import { IOption } from "../models/IOption";
 
 export default class RuleService{
     static async getRules(): Promise<AxiosResponse<IRule[]>>{
@@ -33,5 +35,17 @@ export default class RuleService{
 
     static async getTradingPairs(): Promise<AxiosResponse<ITradingPair[]>>{
         return $api.get<ITradingPair[]>(`/tradingpairs/`);
+    }
+
+    static async getLevarages(): Promise<AxiosResponse<ILevarage[]>>{
+        return $api.get<ILevarage[]>(`/settings/levarages/`);
+    }
+
+    static async getOptions(): Promise<AxiosResponse<IOption>>{
+        return $api.get<IOption>(`/settings/options/`);
+    }
+
+    static async updateOption(key: string, secretKey: string, levarage: number): Promise<AxiosResponse<IOption>>{
+        return $api.put<IOption>(`/settings/options/update/`, {key, secretKey, levarage});
     }
 }

@@ -171,6 +171,64 @@ class RulesController {
         }
     }
     
+    async getLevarages(req, res) {
+        try {
+            const query  = `
+            SELECT * FROM public.leverage
+            ORDER BY id ASC `;
+
+            const result = await pool.query(query);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting levarages:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async getOptions(req, res) {
+        try {
+            const query  = `
+            SELECT * FROM public.options `;
+
+            const result = await pool.query(query);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows[0]);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting options:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async updateOption(req, res) {
+        try {
+            const {key, secretKey, levarage} = req.body;
+            const query = `
+                UPDATE public.options
+                SET apikey = $1, secret = $2, selected_lev = $3
+                RETURNING *
+            `;
+    
+            const result = await pool.query(query, [key, secretKey, levarage]);
+    
+            if (result.rows.length > 0) {
+                res.json(result.rows[0]);
+            } else {
+                res.status(404).json({ message: 'Option is not found' });
+            }
+        } catch (error) {
+            console.error('Error changing option:', error);
+            res.status(500).json({ message: 'An error occurred' });
+        }
+    }
 }
 
 export default new RulesController();

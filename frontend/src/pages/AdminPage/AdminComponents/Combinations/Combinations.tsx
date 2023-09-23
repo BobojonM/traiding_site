@@ -62,8 +62,6 @@ const Combinations: FC = () => {
     const getConnections = async () => {
         try {
             const response = (await RuleService.getConnections(active.timeframe, active.type)).data;
-            console.log(response);
-
             setCombinations([...response]);
         } catch (e: any) {
             console.log(e);
@@ -73,12 +71,10 @@ const Combinations: FC = () => {
 
     useEffect(() => {
         getConnections();
-        // Set up a timer to fetch signals every minute
         const fetchInterval = setInterval(() => {
             getConnections();
         }, 600000);
 
-        // Clean up the timer when the component unmounts
         return () => {
             clearInterval(fetchInterval);
         };

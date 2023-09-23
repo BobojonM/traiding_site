@@ -9,9 +9,7 @@ const Pairs: FC = () => {
 
     const getConnections = async () => {
         try {
-            const response = (await RuleService.getTradingPairs()).data;
-            console.log(response);
-            
+            const response = (await RuleService.getTradingPairs()).data;            
             setPairs([...response]);
         } catch (e: any) {
             console.log(e);
@@ -41,7 +39,7 @@ const Pairs: FC = () => {
                             <td>
                                 {elem.future ? (
                                     <label className={styles.container}>
-                                        <input type="checkbox" checked={true}/>
+                                        <input type="checkbox" checked={true} readOnly={true}/>
                                         <div className={styles.checkmark}></div>
                                     </label>
                                 ) : null}
@@ -49,7 +47,7 @@ const Pairs: FC = () => {
                             <td>
                                 {elem.spot ? (
                                     <label className={styles.container}>
-                                        <input type="checkbox" checked={true}/>
+                                        <input type="checkbox" checked={true} readOnly={true}/>
                                         <div className={styles.checkmark}></div>
                                     </label>
                                 ) : null}

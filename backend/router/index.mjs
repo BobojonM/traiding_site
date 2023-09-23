@@ -38,6 +38,10 @@ router.get('/connections/:timeframe/:type', rulesController.getConnections);
 // Get Trading Pairs
 router.get('/tradingpairs/', rulesController.getTradingPairs);
 
+// Settings
+router.get('/settings/levarages/', rulesController.getLevarages);
+router.get('/settings/options/', rulesController.getOptions);
+router.put('/settings/options/update/', rulesController.updateOption);
 
 
 export default router;
