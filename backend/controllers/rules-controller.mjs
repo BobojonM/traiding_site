@@ -129,9 +129,6 @@ class RulesController {
     async getPairsForTrends(req, res) {
         try {
             const {param, timeframe} = req.params;
-            console.log(param, timeframe);
-
-
             const vnnn = param === 'VN' ? true : false;
             let field = '';
             switch (timeframe) {
