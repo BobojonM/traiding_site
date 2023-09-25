@@ -149,12 +149,10 @@ class RulesController {
                     field = 'day'
                     break;
             }
-            console.log(field, vnnn);
             const query = `SELECT * FROM tradingpairs
             WHERE ${field} = $1
             ORDER BY tradingpairname ASC`;
             const result = await pool.query(query, [vnnn]);
-            console.log(result);
             if (result.rows.length > 0) {
                 res.json(result.rows);
             } else {

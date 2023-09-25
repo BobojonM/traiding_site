@@ -17,7 +17,6 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
 
     const changeActive = (id: number) => {
         setActive(id);
-
     }
 
     const getConnections = async () => {
