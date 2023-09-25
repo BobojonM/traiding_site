@@ -5,6 +5,7 @@ import { Section } from "../NavBar/NavBar";
 import RuleService from "../../../../servises/RuleService";
 import RulesDetail from "../Rules/RulesDetail";
 import RegularButton from "../../../../components/UI/Buttons/RegularButton";
+import Pairs from "../Pairs/Pairs";
 
 interface TrendsInterface {
   timeframe: Section
@@ -16,6 +17,7 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
   const [trends, setTrends] = useState<ITrend[]>([]);
   const [signalsIDs, setSignalsIds] = useState<number[]>([]);
   const [selectedRule, setSelectedRule] = useState<RuleTypes>('');
+  const [selectedCoins, setSelectedCoins] = useState<'VN' | 'NN' | ''>('');
 
   const getTrends = async (timeframe: string) => {
     try {
@@ -66,8 +68,14 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
     }
   };
 
+  const showCoins = (coin: 'VN' | 'NN', timeframe: string) => {
+    console.log(coin, timeframe);
+    setSelectedCoins(coin);
+  }
+
   const handleBack = () => {
     setSelectedRule('');
+    setSelectedCoins('');
     setSignalsIds([]);
   };
 
@@ -80,7 +88,12 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
           <RegularButton action={() => handleBack()}>Назад</RegularButton>
           <RulesDetail ruleName={selectedRule} forTrends={true} signalIds={signalsIDs}/> 
         </>
-      )
+      ) : selectedCoins ? (
+        <>
+          <RegularButton action={() => handleBack()}>Назад</RegularButton>
+          <Pairs position={selectedCoins} timeframe={timeframe.val}></Pairs>
+        </>
+      ) 
       : (
         <table className={styles.trendTable}>
         <thead>
@@ -102,8 +115,16 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
                 #{elem.candle_num}
                 <span className={styles.coloredSquare} style={{ backgroundColor: elem.candle_color }}></span>
               </td>
-              <td>{elem.shorts.toFixed(2)} ({(elem.shorts * 100 / (elem.longs + elem.shorts)).toFixed(2)}%)</td>
-              <td>{elem.longs.toFixed(2)} ({(elem.longs * 100 / (elem.longs + elem.shorts)).toFixed(2)}%)</td>
+              <td>
+                <span className={styles.coins} onClick={() => showCoins('VN', timeframe.val)}>
+                  {elem.shorts.toFixed(0)} ({(elem.shorts * 100 / (elem.longs + elem.shorts)).toFixed(0)}%)
+                </span>
+              </td>
+              <td>
+                <span className={styles.coins} onClick={() => showCoins('NN', timeframe.val)}>
+                  {elem.longs.toFixed(0)} ({(elem.longs * 100 / (elem.longs + elem.shorts)).toFixed(0)}%)
+                </span>
+              </td>
               <td>
                 <ul className={styles.subtable}>
                     <li onClick={() => showRulesDetail(elem.trendid, 'R2Short')}>

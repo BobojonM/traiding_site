@@ -38,6 +38,7 @@ router.get('/connections/:timeframe/:type', rulesController.getConnections);
 // Get Trading Pairs
 router.get('/tradingpairs/', rulesController.getTradingPairs);
 router.get('/tradingpairs/top/', rulesController.getTopTradingPairs);
+router.get('/tradingpairs/trends/:param/:timeframe', rulesController.getPairsForTrends);
 
 // Settings
 router.get('/settings/levarages/', rulesController.getLevarages);

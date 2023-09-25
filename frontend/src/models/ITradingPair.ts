@@ -6,4 +6,8 @@ export interface ITradingPair{
     price: number
     change: number
     changepercent: number
+    fifteen: boolean
+    hour: boolean
+    four: boolean
+    day: boolean
 }

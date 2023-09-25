@@ -112,9 +112,49 @@ class RulesController {
             const {ids} = req.body;
             const query = `SELECT * FROM signals	
             WHERE signalid in (${ids.join(',')})
-            order by signalid`;
+            ORDER BY timestamp DESC`;
 
             const result = await pool.query(query);
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting connections:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async getPairsForTrends(req, res) {
+        try {
+            const {param, timeframe} = req.params;
+            console.log(param, timeframe);
+
+
+            const vnnn = param === 'VN' ? true : false;
+            let field = '';
+            switch (timeframe) {
+                case '15m':
+                    field = 'fifteen'
+                    break;
+                case '1h':
+                    field = 'hour'
+                    break;
+                case '4h':
+                    field = 'four'
+                    break;
+            
+                default:
+                    field = 'day'
+                    break;
+            }
+            console.log(field, vnnn);
+            const query = `SELECT * FROM tradingpairs
+            WHERE ${field} = $1
+            ORDER BY tradingpairname ASC`;
+            const result = await pool.query(query, [vnnn]);
+            console.log(result);
             if (result.rows.length > 0) {
                 res.json(result.rows);
             } else {
@@ -156,7 +196,7 @@ class RulesController {
         try{
             const query = `
             SELECT * FROM public.tradingpairs
-            ORDER BY tradingpairid ASC 
+            ORDER BY tradingpairname ASC 
             `
             const result = await pool.query(query);
 

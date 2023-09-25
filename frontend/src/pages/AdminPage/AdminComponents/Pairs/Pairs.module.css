@@ -30,6 +30,35 @@
     background-color: #575757;
 }
 
+.menu{
+    display: flex;
+    width: 50%;
+    list-style-type: none;
+    margin: 0 auto;
+    justify-content: space-around;
+    padding: 2%;   
+}
+
+.menu li{
+    cursor: pointer;
+    padding: 1% 5%;
+}
+
+.menu li:hover{
+    outline: 1px solid white;
+    outline-offset: -1px;
+    border-radius: 10px;
+}
+
+.menu_active{
+    border-radius: 10px;
+    background-color: rgb(126, 126, 126);
+}
+
+.warning {
+    color: rgb(153, 10, 29);
+}
+
 
 .container input {
     position: absolute;

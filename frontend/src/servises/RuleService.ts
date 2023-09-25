@@ -52,4 +52,8 @@ export default class RuleService{
     static async updateOption(key: string, secretKey: string, levarage: number): Promise<AxiosResponse<IOption>>{
         return $api.put<IOption>(`/settings/options/update/`, {key, secretKey, levarage});
     }
+
+    static async getPairsForTrends(param: 'VN' | 'NN', timeframe: string): Promise<AxiosResponse<ITradingPair[]>>{
+        return $api.get<ITradingPair[]>(`/tradingpairs/trends/${param}/${timeframe}`);
+    }
 }

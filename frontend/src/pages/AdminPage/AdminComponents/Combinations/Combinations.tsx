@@ -104,7 +104,7 @@ const Combinations: FC = () => {
                 <tbody>
                     {combinations.map((elem: ICombination) => (
                         <tr key={elem.connectid}>
-                            <td>{elem.tradingpair}</td>
+                            <td><a href={`https://www.tradingview.com/symbols/${elem.tradingpair}.P/`} target="_blank">{elem.tradingpair}</a></td>
                             <td>
                                 {formatData(elem.data)}
                             </td>

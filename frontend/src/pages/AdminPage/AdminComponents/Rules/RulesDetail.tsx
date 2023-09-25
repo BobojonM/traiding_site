@@ -62,7 +62,7 @@ const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = 
                 {signals
                     .map((elem: IRuleSignal) => (
                         <tr key={`${elem.signalid}${elem.timestamp}`}>
-                            <td>{elem.tradingpair}</td>
+                            <td><a href={`https://www.tradingview.com/symbols/${elem.tradingpair}.P/`} target="_blank">{elem.tradingpair}</a></td>
                             <td>{elem.timeframe}</td>
                             <td>{elem.rule}</td>
                             <td>{elem.timestamp}</td>

@@ -33,6 +33,7 @@ const Dumps: FC = () => {
             <table className={styles.pairsTable}>
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Монета</th>
                         <th>Цена</th>
                         <th>Change</th>
@@ -40,8 +41,9 @@ const Dumps: FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {pairs.map((elem: ITradingPair) => (
+                    {pairs.map((elem: ITradingPair, index) => (
                         <tr key={elem.tradingpairid}>
+                            <td>{index + 1}</td>
                             <td>{elem.tradingpairname}</td>
                             <td>{elem.price}</td>
                             <td>{elem.change}</td>

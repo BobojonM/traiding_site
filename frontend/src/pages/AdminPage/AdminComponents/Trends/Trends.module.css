@@ -38,11 +38,12 @@
     border-radius: 2px;
 }
   
-.subtable li{
+.subtable li, .coins{
     width: 90%;
     display: flex;
     justify-content: space-between;
     cursor: pointer;
     color: #5b5ddb;
     border-bottom: 1px dashed white;
+    text-align: center;
 }
