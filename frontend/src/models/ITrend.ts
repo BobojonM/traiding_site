@@ -3,7 +3,7 @@ export interface ITrend{
     longs: number
     shorts: number
     timestamp: string
-    candle_num: string
+    candle_num: number
     candle_color: string
     rshort: string
     ashort: string

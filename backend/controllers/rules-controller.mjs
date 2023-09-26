@@ -65,6 +65,8 @@ class RulesController {
             SELECT signalid, tradingpair, timeframe, rule, data, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
             FROM public.signals
             WHERE rule = $1
+            AND timeframe <> '3m'
+            AND timeframe <> '5m'
             ORDER BY timestamp DESC
             LIMIT 100
             `

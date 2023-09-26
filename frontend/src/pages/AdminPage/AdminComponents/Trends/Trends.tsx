@@ -11,7 +11,7 @@ interface TrendsInterface {
   timeframe: Section
 }
 
-type RuleTypes = 'R2Short' | '4AShort' | '4BShort' | 'GFLY' | 'R1Long' | '3ALong' | '3BLong' | 'BFLY' | '';
+type RuleTypes = 'R2Short' | '4AShort' | '4BShort' | 'GFLYShort' | 'R1Long' | '3ALong' | '3BLong' | 'BFLYLong' | '';
 
 const Trends: FC<TrendsInterface> = ({ timeframe }) => {
   const [trends, setTrends] = useState<ITrend[]>([]);
@@ -112,7 +112,7 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
           {trends.map((elem: ITrend) => (
             <tr key={elem.trendid}>
               <td>
-                #{elem.candle_num}
+                #{(elem.candle_num - 1)}
                 <span className={styles.coloredSquare} style={{ backgroundColor: elem.candle_color }}></span>
               </td>
               <td>
@@ -139,7 +139,7 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
                         <div><b>4BShort:</b></div>
                         <div className={styles.value}>{elem.bshort}</div>
                     </li>
-                    <li onClick={() => showRulesDetail(elem.trendid, 'GFLY')}>
+                    <li onClick={() => showRulesDetail(elem.trendid, 'GFLYShort')}>
                         <div><b>GFLY:</b></div>
                         <div className={styles.value}>{elem.gfly}</div>
                     </li>
@@ -160,7 +160,7 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
                         <div><b>3BLong:</b></div>
                         <div className={styles.value}>{elem.blong}</div>
                     </li>
-                    <li onClick={() => showRulesDetail(elem.trendid, 'BFLY')}>
+                    <li onClick={() => showRulesDetail(elem.trendid, 'BFLYLong')}>
                         <div><b>BFLY:</b></div>
                         <div className={styles.value}>{elem.bfly}</div>
                     </li>

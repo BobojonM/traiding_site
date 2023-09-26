@@ -56,7 +56,8 @@
 }
 
 .warning {
-    color: rgb(153, 10, 29);
+    /* color: rgb(153, 10, 29); */
+    color: #c78f97;
 }
 
 

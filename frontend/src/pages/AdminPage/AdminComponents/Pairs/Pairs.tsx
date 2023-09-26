@@ -61,7 +61,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
                             <tr key={elem.tradingpairid}>
                                 <td>{index + 1}</td>
                                 <td>
-                                    <a href={`https://www.tradingview.com/symbols/${elem.tradingpairname}.P/`} target="_blank">
+                                    <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpairname}.P`} target="_blank">
                                         {elem.tradingpairname}
                                     </a>
                                 </td>
@@ -98,7 +98,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
                             <tr key={elem.tradingpairid}>
                                 <td>{index + 1}</td>
                                 <td>
-                                    <a href={`https://www.tradingview.com/symbols/${elem.tradingpairname}.P/`} target="_blank">
+                                    <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpairname}.P`} target="_blank">
                                         {elem.tradingpairname}
                                     </a>
                                 </td>
