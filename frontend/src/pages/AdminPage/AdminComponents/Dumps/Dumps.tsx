@@ -6,12 +6,22 @@ import RuleService from "../../../../servises/RuleService";
 import { DataInterace, IDate } from "../../../../models/IDates";
 
 
+const timeframeOptions = [
+    { value: 'all', label: 'End' },
+    { value: '0-4', label: '00:00 - 04:00' },
+    { value: '4-8', label: '04:00 - 08:00' },
+    { value: '8-12', label: '08:00 - 12:00' },
+    { value: '12-16', label: '12:00 - 16:00' },
+    { value: '16-20', label: '16:00 - 20:00' },
+    { value: '20-24', label: '20:00 - 24:00' },
+];
+const today = new Date();
+
 const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
-    const today = new Date();
-
+    
     const getTop = async () => {
         try {
             const response = (await RuleService.getTopTradingPairs()).data;            
@@ -79,8 +89,6 @@ const Dumps: FC = () => {
         <div className={styles.tradingpairs}>
             <h1>Pumps/Dumps</h1>
             <div className={styles.calendar}>
-                <h2>Select Date</h2>
-
                 <div className={styles.buttonsContainer}>
                     <button className={selectedDate === 0 ? styles.dateActive : styles.dateButton}
                         onClick={() => changeDate(0)}>
@@ -95,6 +103,20 @@ const Dumps: FC = () => {
                     </button>
                     ))}
                 </div>
+
+                {selectedDate === 0 || selectedDate === 1 
+                ? (
+                    <div className={styles.selectContainer}>
+                        <span>Choose the timeframe</span>
+                        <select>
+                        {timeframeOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                        </select>
+                    </div>
+                ) : null}
             </div>
 
             <table className={styles.pairsTable}>
