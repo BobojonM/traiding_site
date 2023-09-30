@@ -286,6 +286,47 @@ class RulesController {
             res.status(500).json({ message: 'An error occurred' });
         }
     }
+
+    // Pumps dumps new functionality
+
+    async dumpsGetPreviousDates(req, res) {
+        try {
+            const query  = `
+            SELECT id, timestamp FROM public.toppairs
+            ORDER BY timestamp DESC`;
+
+            const result = await pool.query(query);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting dates:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async getDumpDataForDate(req, res) {
+        try {
+            const id = req.params.id;
+            const query  = `
+            SELECT data FROM public.toppairs
+            WHERE id = $1`;
+
+            const result = await pool.query(query, [id]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting data:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
 }
 
 export default new RulesController();

@@ -1,13 +1,13 @@
 export interface ITradingPair{
-    tradingpairid: number
+    tradingpairid?: number
     tradingpairname: string
-    future: boolean
-    spot: boolean
+    future?: boolean
+    spot?: boolean
     price: number
     change: number
     changepercent: number
-    fifteen: boolean
-    hour: boolean
-    four: boolean
-    day: boolean
+    fifteen?: boolean
+    hour?: boolean
+    four?: boolean
+    day?: boolean
 }

@@ -7,6 +7,7 @@ import { ICombination } from "../models/ICombination";
 import { ITradingPair } from "../models/ITradingPair";
 import { ILevarage } from "../models/ILevarage";
 import { IOption } from "../models/IOption";
+import { DataInterace, IDate } from "../models/IDates";
 
 export default class RuleService{
     static async getRules(): Promise<AxiosResponse<IRule[]>>{
@@ -55,5 +56,13 @@ export default class RuleService{
 
     static async getPairsForTrends(param: 'VN' | 'NN', timeframe: string): Promise<AxiosResponse<ITradingPair[]>>{
         return $api.get<ITradingPair[]>(`/tradingpairs/trends/${param}/${timeframe}`);
+    }
+
+    static async dumpsGetPreviousDates(): Promise<AxiosResponse<IDate[]>>{
+        return $api.get<IDate[]>(`/dumps/dates`);
+    }
+
+    static async getDumpDataForDate(id: number): Promise<AxiosResponse<Record<string, Record<string, DataInterace>>[]>>{
+        return $api.get<Record<string, Record<string, DataInterace>>[]>(`/dumps/dates/${id}`);
     }
 }

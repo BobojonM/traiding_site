@@ -48,7 +48,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
             <h1>Монеты</h1>
             {position && timeframe ? (
                 <>
-                <h1 className={styles.warning}>Текущие монеты только для последнего тренда! {timeframe} {position}</h1>
+                <h1 className={styles.warning}>Текущие монеты последнего тренда! {timeframe} {position}</h1>
                 <table className={styles.pairsTable}>
                     <thead>
                         <tr>
@@ -62,7 +62,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
                                 <td>{index + 1}</td>
                                 <td>
                                     <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpairname}.P`} target="_blank">
-                                        {elem.tradingpairname}
+                                        {elem.tradingpairname}.P
                                     </a>
                                 </td>
                             </tr>
@@ -99,7 +99,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
                                 <td>{index + 1}</td>
                                 <td>
                                     <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpairname}.P`} target="_blank">
-                                        {elem.tradingpairname}
+                                        {menu[active] === 'Futures' ? `${elem.tradingpairname}.P` : `${elem.tradingpairname}`}
                                     </a>
                                 </td>
                                 <td>

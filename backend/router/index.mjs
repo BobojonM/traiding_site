@@ -45,5 +45,9 @@ router.get('/settings/levarages/', rulesController.getLevarages);
 router.get('/settings/options/', rulesController.getOptions);
 router.put('/settings/options/update/', rulesController.updateOption);
 
+// Dumps/Pumps New 
+router.get('/dumps/dates', rulesController.dumpsGetPreviousDates);
+router.get('/dumps/dates/:id', rulesController.getDumpDataForDate);
+
 
 export default router;
