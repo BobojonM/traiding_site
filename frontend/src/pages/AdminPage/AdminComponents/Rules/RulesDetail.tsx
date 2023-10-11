@@ -55,6 +55,7 @@ const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = 
                     <th>Traiding Pair</th>
                     <th>Timeframe</th>
                     <th>Rule</th>
+                    {ruleName === 'GFLYShort' || ruleName === 'BFLYLong' ? (<th>Ratio</th>) : null}
                     <th>Timestamp (Almaty)</th>
                 </tr>
             </thead>
@@ -65,6 +66,9 @@ const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = 
                             <td><a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpair}.P`} target="_blank">{elem.tradingpair}</a></td>
                             <td>{elem.timeframe}</td>
                             <td>{elem.rule}</td>
+                            {ruleName === 'GFLYShort' || ruleName === 'BFLYLong' ? 
+                            (<td>CR: {elem.ratio.CR.toFixed(2)}, PR: {elem.ratio.PR.toFixed(2)}</td>) : null}
+                            
                             <td>{elem.timestamp}</td>
                         </tr>
                     ))}

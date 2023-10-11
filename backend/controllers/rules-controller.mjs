@@ -85,7 +85,7 @@ class RulesController {
         try{
             const ruleName = req.params.name;
             const query = `
-            SELECT signalid, tradingpair, timeframe, rule, data, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
+            SELECT signalid, tradingpair, timeframe, rule, data, ratio, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
             FROM public.signals
             WHERE rule = $1
             AND timeframe <> '3m'
