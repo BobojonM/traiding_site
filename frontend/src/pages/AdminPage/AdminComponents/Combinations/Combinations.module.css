@@ -30,6 +30,11 @@
     background-color: #575757;
 }
 
+caption{
+    color:  #c78f97;
+    font-size: 1rem;
+}
+
 .menu{
     display: flex;
     width: 60%;

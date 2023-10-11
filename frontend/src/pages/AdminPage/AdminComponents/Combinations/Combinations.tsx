@@ -133,10 +133,13 @@ const Combinations: FC = () => {
             </ul>
 
             <table className={styles.combTable}>
+                {isSettings ? (<caption>Управление правилами на 15м (1час совмещение)</caption>) : null}
                 <thead>
                     {isSettings ? (
                         <tr>
                             <th>Правило</th>
+                            <th>Описание</th>
+                            <th>Тип</th>
                             <th>Connect Status</th>
                         </tr>
                     ) : (
@@ -152,6 +155,8 @@ const Combinations: FC = () => {
                         rules.map((elem: IRule) => (
                             <tr key={elem.ruleid}>
                                 <td>{elem.rulename}</td>
+                                <td>{elem.description}</td>
+                                <td>{elem.type}</td>
                                 <td>
                                     <label className={styles.switch}>
                                         <input
