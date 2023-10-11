@@ -3,6 +3,7 @@ import styles from './Combinations.module.css'
 
 import { ICombination } from "../../../../models/ICombination";
 import RuleService from "../../../../servises/RuleService";
+import { IRule } from "../../../../models/IRule";
 
 interface CombinationsMenu {
     name: string
@@ -54,9 +55,12 @@ const formatData = (data: string) => {
 const Combinations: FC = () => {
     const [combinations, setCombinations] = useState<ICombination[]>([]);
     const [active, setActive] = useState<CombinationsMenu>(menu[0]);
+    const [isSettings, setIsSettings] = useState(false);
+    const [rules, setRules] = useState<IRule[]>([]);
 
     const changeActive = (id: number) => {
         setActive(menu[id]);
+        setIsSettings(false);
     }
 
     const getConnections = async () => {
@@ -69,16 +73,43 @@ const Combinations: FC = () => {
         }
     }
 
-    useEffect(() => {
-        getConnections();
-        const fetchInterval = setInterval(() => {
-            getConnections();
-        }, 600000);
+    const getRules = async() => {
+        try{
+            const response = (await RuleService.getRules()).data;
+            setRules(response);
+        }catch(e: any){
+            console.log(e);
+          }
+    }
 
-        return () => {
-            clearInterval(fetchInterval);
-        };
-}, [active]);
+    const toggleStatus = async (ruleId: number) => {
+        const ruleIndex = rules.findIndex(rule => rule.ruleid === ruleId);
+    
+        if (ruleIndex !== -1) {
+            await RuleService.changeConnectionStatus(rules[ruleIndex].ruleid);
+            setRules(prevRules =>
+                prevRules.map((rule, index) =>
+                    index === ruleIndex ? { ...rule, connect_status: !rule.connect_status } : rule
+                )
+            );
+        }
+    }
+
+    useEffect(() => {
+        if (!isSettings){
+            getConnections();
+            const fetchInterval = setInterval(() => {
+                getConnections();
+            }, 600000);
+    
+            return () => {
+                clearInterval(fetchInterval);
+            };
+        } else {
+            getRules();
+        }
+
+    }, [active, isSettings]);
 
     return (
         <div className={styles.combinations}>
@@ -91,30 +122,64 @@ const Combinations: FC = () => {
                         onClick={() => changeActive(index)}>{elem.name}
                     </li>
                 ))}
+                <li
+                    className={isSettings ? styles.menu_active : ''}
+                    onClick={() => {
+                        setIsSettings(!isSettings);
+                        setActive(menu[-1])
+                        }}>
+                        Настройки
+                </li>
             </ul>
 
             <table className={styles.combTable}>
                 <thead>
-                    <tr>
-                        <th>Trading Pair</th>
-                        <th>Data</th>
-                        <th>Timestamp</th>
-                    </tr>
+                    {isSettings ? (
+                        <tr>
+                            <th>Правило</th>
+                            <th>Connect Status</th>
+                        </tr>
+                    ) : (
+                        <tr>
+                            <th>Trading Pair</th>
+                            <th>Data</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    )}
                 </thead>
                 <tbody>
-                    {combinations.map((elem: ICombination) => (
-                        <tr key={elem.connectid}>
-                            <td>
-                                <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpair}.P`} target="_blank">
-                                {elem.tradingpair}.P
-                                </a>
-                            </td>
-                            <td>
-                                {formatData(elem.data)}
-                            </td>
-                            <td>{elem.timestamp}</td>
-                        </tr>
-                    ))}
+                    {isSettings ? (
+                        rules.map((elem: IRule) => (
+                            <tr key={elem.ruleid}>
+                                <td>{elem.rulename}</td>
+                                <td>
+                                    <label className={styles.switch}>
+                                        <input
+                                            type="checkbox"
+                                            checked={elem.connect_status}
+                                            onChange={() => toggleStatus(elem.ruleid)}
+                                        />
+                                        <span className={`${styles.slider} ${styles.round}`}></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        combinations.map((elem: ICombination) => (
+                            <tr key={elem.connectid}>
+                                <td>
+                                    <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpair}.P`} target="_blank">
+                                    {elem.tradingpair}.P
+                                    </a>
+                                </td>
+                                <td>
+                                    {formatData(elem.data)}
+                                </td>
+                                <td>{elem.timestamp}</td>
+                            </tr>
+                        ))
+                    )}
+
                 </tbody>
             </table>
         </div>

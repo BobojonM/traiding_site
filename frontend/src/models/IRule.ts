@@ -3,5 +3,6 @@ export interface IRule{
     rulename: string,
     description: string,
     type: string,
-    status: boolean
+    status: boolean,
+    connect_status: boolean
 }

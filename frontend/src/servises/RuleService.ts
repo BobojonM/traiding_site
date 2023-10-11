@@ -18,6 +18,10 @@ export default class RuleService{
         return $api.put(`/rules/status/${id}`);
     }
 
+    static async changeConnectionStatus(id: number): Promise<AxiosResponse>{
+        return $api.put(`/rules/connection/${id}`);
+    }
+
     static async getSignals(ruleName: string): Promise<AxiosResponse<IRuleSignal[]>>{
         return $api.get<IRuleSignal[]>(`/rules/signals/${ruleName}`);
     }

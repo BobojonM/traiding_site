@@ -24,6 +24,7 @@ router.get('/rules/', rulesController.getAllRules);
 router.get('/rules/:cat', rulesController.getAllRulesForCat);
 router.post('/rules/create', rulesController.createRule);
 router.put('/rules/status/:id', rulesController.changeStatus);
+router.put('/rules/connection/:id', rulesController.changeConnectionStatus);
 
 // Singals for rules
 router.get('/rules/signals/:name', rulesController.getSignalsForRule);

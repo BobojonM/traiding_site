@@ -56,6 +56,29 @@ class RulesController {
         }
     }
 
+    async changeConnectionStatus(req, res) {
+        try {
+            const id = req.params.id; 
+            const query = `
+                UPDATE rules
+                SET connect_status = CASE WHEN connect_status = true THEN false ELSE true END
+                WHERE ruleid = $1
+                RETURNING *
+            `;
+    
+            const result = await pool.query(query, [id]);
+    
+            if (result.rows.length > 0) {
+                res.json(result.rows[0]);
+            } else {
+                res.status(404).json({ message: 'Rule not found' });
+            }
+        } catch (error) {
+            console.error('Error toggling status:', error);
+            res.status(500).json({ message: 'An error occurred' });
+        }
+    }
+
 
     // Controllers to get signals by the rule
     async getSignalsForRule(req, res){

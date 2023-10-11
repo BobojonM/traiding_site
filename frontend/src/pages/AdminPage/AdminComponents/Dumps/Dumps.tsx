@@ -7,7 +7,7 @@ import { DataInterace, IDate } from "../../../../models/IDates";
 
 
 const timeframeOptions = [
-    { value: 'all', label: 'End' },
+    { value: 'all', label: 'Текущие' },
     { value: '0-4', label: '00:00 - 04:00' },
     { value: '4-8', label: '04:00 - 08:00' },
     { value: '8-12', label: '08:00 - 12:00' },
@@ -21,6 +21,7 @@ const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
+    const [selectedTimeframe, setSelectedTimeframe] = useState('all');
     
     const getTop = async () => {
         try {
@@ -69,7 +70,11 @@ const Dumps: FC = () => {
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
         const year = date.getFullYear(); 
         return `${day}/${month}/${year}`;
-      };
+    };
+
+    const handleTimeframeChange = async (value: string) => {
+        setSelectedTimeframe(value);
+    };
       
 
     useEffect(() => {
@@ -78,7 +83,7 @@ const Dumps: FC = () => {
             getTop();
             const fetchInterval = setInterval(() => {
                 getTop();
-            }, 5000);
+            }, 30000);
             return () => {
                 clearInterval(fetchInterval);
             };
@@ -107,8 +112,8 @@ const Dumps: FC = () => {
                 {selectedDate === 0 || selectedDate === 1 
                 ? (
                     <div className={styles.selectContainer}>
-                        <span>Choose the timeframe</span>
-                        <select>
+                        <span>Выберите время:</span>
+                        <select value={selectedTimeframe} onChange={(e) => handleTimeframeChange(e.target.value)}>
                         {timeframeOptions.map((option) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}
