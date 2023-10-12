@@ -6,22 +6,36 @@ import RuleService from "../../../../servises/RuleService";
 import { DataInterace, IDate } from "../../../../models/IDates";
 
 
-const timeframeOptions = [
-    { value: 'all', label: 'Текущие' },
-    { value: '0-4', label: '00:00 - 04:00' },
-    { value: '4-8', label: '04:00 - 08:00' },
-    { value: '8-12', label: '08:00 - 12:00' },
-    { value: '12-16', label: '12:00 - 16:00' },
-    { value: '16-20', label: '16:00 - 20:00' },
-    { value: '20-24', label: '20:00 - 24:00' },
-];
+interface timeframeInterface {
+    value: string | number,
+    label: string
+}
+
+// const timeframeOptions = [
+//     { value: 'all', label: 'Текущие' },
+//     { value: '0-4', label: '00:00 - 04:00' },
+//     { value: '4-8', label: '04:00 - 08:00' },
+//     { value: '8-12', label: '08:00 - 12:00' },
+//     { value: '12-16', label: '12:00 - 16:00' },
+//     { value: '16-20', label: '16:00 - 20:00' },
+//     { value: '20-24', label: '20:00 - 24:00' },
+// ];
 const today = new Date();
+
+const formatDate = (inputDate: string) => {
+    const date = new Date(inputDate);
+    const day = date.getDate().toString().padStart(2, '0'); 
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+    const year = date.getFullYear(); 
+    return `${day}/${month}/${year}`;
+};
 
 const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
-    const [selectedTimeframe, setSelectedTimeframe] = useState('all');
+    const [selectedTimeframe, setSelectedTimeframe] = useState('');
+    const [timeframeOptions, setTimeframeOptions] = useState<timeframeInterface[]>();
     
     const getTop = async () => {
         try {
@@ -33,7 +47,7 @@ const Dumps: FC = () => {
         }
     };
 
-    const getDates =async () => {
+    const getDates = async () => {
         try {
             const response = (await RuleService.dumpsGetPreviousDates()).data;            
             setDates([...response]);        
@@ -42,8 +56,27 @@ const Dumps: FC = () => {
         }
     };
 
-    const changeDate = async (id: number) => {
-        setSelectedDate(id);
+    const getTimeframes = async (date: string) => {
+        const response = (await RuleService.getFourHoursForDate(date)).data;
+    
+        const formattedTimeframes = response.map((item) => {
+            const timestamp = new Date(item.timestamp);
+            const hours = timestamp.getHours().toString().padStart(2, '0');
+            return {
+                value: item.id,
+                label: hours + ':00' 
+            };
+        });
+        if(selectedDate === 0){
+            setTimeframeOptions([{ value: 'all', label: 'Текущие' }, ...formattedTimeframes]);
+        }
+        else {
+            setTimeframeOptions(formattedTimeframes);
+        }
+    };
+
+    const changeDate = async (id: number, index: number) => {
+        setSelectedDate(index);
         if (id !== 0){
             const response = (await RuleService.getDumpDataForDate(id));
             const newData = response.data[0].data;
@@ -64,21 +97,40 @@ const Dumps: FC = () => {
         }
     };
 
-    const formatDate = (inputDate: string) => {
-        const date = new Date(inputDate);
-        const day = date.getDate().toString().padStart(2, '0'); 
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
-        const year = date.getFullYear(); 
-        return `${day}/${month}/${year}`;
-    };
+
 
     const handleTimeframeChange = async (value: string) => {
         setSelectedTimeframe(value);
+        if(value !== 'all'){
+            const response = (await RuleService.getDumpForHours(parseInt(value)));
+            const newData = response.data[0].data;
+    
+            const newPairs: ITradingPair[] = [];
+            Object.keys(newData).forEach((key: string) => {
+                const tradingPair: DataInterace = newData[key];
+                const {change, changepercent, pair, price} = tradingPair;
+                
+                newPairs.push({
+                    tradingpairname: pair,
+                    price,
+                    change,
+                    changepercent,
+                });
+            });
+            setPairs(newPairs);
+        }
     };
       
 
     useEffect(() => {
-        if(selectedDate === 0) {
+        if(selectedDate === 0 || selectedDate === 1) {
+            let date = today.getDate().toString();
+            if(selectedDate === 1){
+                date = new Date(dates[selectedDate - 1].timestamp).getDate().toString().padStart(2, '0');
+            }
+            getTimeframes(date);
+        }
+        if(selectedDate === 0 && selectedTimeframe === 'all') {
             getDates();
             getTop();
             const fetchInterval = setInterval(() => {
@@ -88,7 +140,7 @@ const Dumps: FC = () => {
                 clearInterval(fetchInterval);
             };
         }
-    }, [selectedDate]);
+    }, [selectedDate, selectedTimeframe]);
 
     return (
         <div className={styles.tradingpairs}>
@@ -96,14 +148,14 @@ const Dumps: FC = () => {
             <div className={styles.calendar}>
                 <div className={styles.buttonsContainer}>
                     <button className={selectedDate === 0 ? styles.dateActive : styles.dateButton}
-                        onClick={() => changeDate(0)}>
+                        onClick={() => changeDate(0, 0)}>
                         {`${today.getDate().toString().padStart(2, '0')}/${today.getMonth() + 1}/${today.getFullYear()}`}
                     </button>
 
-                    {dates.map((elem) => (
+                    {dates.map((elem, index) => (
                     <button key={elem.id}
-                        className={selectedDate === elem.id ? styles.dateActive : styles.dateButton}
-                        onClick={() => changeDate(elem.id)}>
+                        className={selectedDate === index + 1 ? styles.dateActive : styles.dateButton}
+                        onClick={() => changeDate(elem.id, index + 1)}>
                         {formatDate(elem.timestamp)}
                     </button>
                     ))}
@@ -114,7 +166,7 @@ const Dumps: FC = () => {
                     <div className={styles.selectContainer}>
                         <span>Выберите время:</span>
                         <select value={selectedTimeframe} onChange={(e) => handleTimeframeChange(e.target.value)}>
-                        {timeframeOptions.map((option) => (
+                        {timeframeOptions?.map((option) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}
                             </option>

@@ -315,8 +315,11 @@ class RulesController {
     async dumpsGetPreviousDates(req, res) {
         try {
             const query  = `
-            SELECT id, timestamp FROM public.toppairs
-            ORDER BY timestamp DESC`;
+            SELECT id, timestamp
+            FROM public.toppairs
+            WHERE timeframe = '1d'
+            ORDER BY timestamp DESC
+            LIMIT 9`;
 
             const result = await pool.query(query);
 
@@ -350,6 +353,51 @@ class RulesController {
             res.status(500).json({ message: 'An error occurred retrieving the data' });
         }
     }
+
+    async getFourHoursForDate(req, res) {
+        try {
+            const date = req.params.date;
+            const query  = `
+            SELECT id, timestamp 
+            FROM toppairsfour
+            WHERE EXTRACT(day FROM timestamp) = $1
+            ORDER BY "timestamp" DESC
+            LIMIT 6`;
+
+            const result = await pool.query(query, [date]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting data:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    async getDumpForHours(req, res) {
+        try {
+            const id = req.params.id;
+            const query  = `
+            SELECT data 
+            FROM toppairsfour
+            WHERE id = $1`;
+
+            const result = await pool.query(query, [id]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting data:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
 }
 
 export default new RulesController();

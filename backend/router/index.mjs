@@ -49,6 +49,8 @@ router.put('/settings/options/update/', rulesController.updateOption);
 // Dumps/Pumps New 
 router.get('/dumps/dates', rulesController.dumpsGetPreviousDates);
 router.get('/dumps/dates/:id', rulesController.getDumpDataForDate);
+router.get('/dumps/dates/time/:date', rulesController.getFourHoursForDate);
+router.get('/dumps/time/:id', rulesController.getDumpForHours);
 
 
 export default router;

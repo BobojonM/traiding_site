@@ -66,7 +66,15 @@ export default class RuleService{
         return $api.get<IDate[]>(`/dumps/dates`);
     }
 
+    static async getFourHoursForDate(date: string): Promise<AxiosResponse<IDate[]>>{
+        return $api.get<IDate[]>(`/dumps/dates/time/${date}`);
+    }
+
     static async getDumpDataForDate(id: number): Promise<AxiosResponse<Record<string, Record<string, DataInterace>>[]>>{
         return $api.get<Record<string, Record<string, DataInterace>>[]>(`/dumps/dates/${id}`);
+    }
+
+    static async getDumpForHours(id: number): Promise<AxiosResponse<Record<string, Record<string, DataInterace>>[]>>{
+        return $api.get<Record<string, Record<string, DataInterace>>[]>(`/dumps/time/${id}`);
     }
 }
