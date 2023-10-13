@@ -11,15 +11,6 @@ interface timeframeInterface {
     label: string
 }
 
-// const timeframeOptions = [
-//     { value: 'all', label: 'Текущие' },
-//     { value: '0-4', label: '00:00 - 04:00' },
-//     { value: '4-8', label: '04:00 - 08:00' },
-//     { value: '8-12', label: '08:00 - 12:00' },
-//     { value: '12-16', label: '12:00 - 16:00' },
-//     { value: '16-20', label: '16:00 - 20:00' },
-//     { value: '20-24', label: '20:00 - 24:00' },
-// ];
 const today = new Date();
 
 const formatDate = (inputDate: string) => {
@@ -34,7 +25,7 @@ const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
-    const [selectedTimeframe, setSelectedTimeframe] = useState('');
+    const [selectedTimeframe, setSelectedTimeframe] = useState('all');
     const [timeframeOptions, setTimeframeOptions] = useState<timeframeInterface[]>();
     
     const getTop = async () => {
