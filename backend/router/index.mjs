@@ -35,6 +35,7 @@ router.post('/trends/signals', rulesController.getSignalsForTrends);
 
 // Get Connections
 router.get('/connections/:timeframe/:type', rulesController.getConnections);
+router.get('/connections/:pair', rulesController.getTopConnections);
 
 // Get Trading Pairs
 router.get('/tradingpairs/', rulesController.getTradingPairs);

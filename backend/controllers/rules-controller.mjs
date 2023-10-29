@@ -212,6 +212,31 @@ class RulesController {
         }
     }
 
+    async getTopConnections(req, res){
+        try{
+            const pair = req.params.pair;
+            const query = `
+            SELECT connectid, tradingpair, data, 
+                to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
+            FROM public.connections
+            WHERE timeframe = '1h'
+            AND tradingpair = $1
+            ORDER BY timestamp DESC
+            LIMIT 1
+            `
+            const result = await pool.query(query, [pair]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Not found' });
+            }
+        } catch (error) {
+            console.error('Error getting connections:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
     async getTradingPairs(req, res){
         try{
             const query = `
@@ -235,6 +260,7 @@ class RulesController {
         try{
             const query = `
             SELECT * FROM public.tradingpairs
+            WHERE future = True
             ORDER BY changepercent DESC
             LIMIT 12 
             `
