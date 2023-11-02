@@ -46,6 +46,12 @@ const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = 
         }
     }, [ruleName, forTrends]);
 
+    const getAlmatyTime = (time: string) => {
+        const inputDateString = time;
+        const inputDate = new Date(inputDateString);
+        return new Date(inputDate.getTime() + 6 * 60 * 60 * 1000);
+      }
+
     return(
         <>
         {signals.length > 0 ? (
@@ -69,7 +75,7 @@ const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = 
                             {ruleName === 'GFLYShort' || ruleName === 'BFLYLong' ? 
                             (<td>CR: {elem.ratio.CR.toFixed(2)}, PR: {elem.ratio.PR.toFixed(2)}</td>) : null}
                             
-                            <td>{elem.timestamp}</td>
+                            <td>{getAlmatyTime(elem.timestamp).toString()}</td>
                         </tr>
                     ))}
             </tbody>
