@@ -49,7 +49,16 @@ const RulesDetail: FC<RulesDetail> = ({ruleName, forTrends = false, signalIds = 
     const getAlmatyTime = (time: string) => {
         const inputDateString = time;
         const inputDate = new Date(inputDateString);
-        return new Date(inputDate.getTime() + 6 * 60 * 60 * 1000);
+        const sixHoursLater = new Date(inputDate.getTime() + 6 * 60 * 60 * 1000);
+
+
+        const year = sixHoursLater.getFullYear();
+        const month = String(sixHoursLater.getMonth() + 1).padStart(2, '0');
+        const day = String(sixHoursLater.getDate()).padStart(2, '0');
+        const hours = String(sixHoursLater.getHours()).padStart(2, '0');
+        const minutes = String(sixHoursLater.getMinutes()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:00`;
+        return formattedDate
       }
 
     return(
