@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from "react";
 import styles from './Dumps.module.css';
 
-import { ITradingPair } from "../../../../models/ITradingPair";
+import { ITradingPair, SignalData } from "../../../../models/ITradingPair";
 import RuleService from "../../../../servises/RuleService";
 import { DataInterace, IDate } from "../../../../models/IDates";
-
+import { ICombination } from "../../../../models/ICombination";
 
 interface timeframeInterface {
     value: string | number,
@@ -21,17 +21,60 @@ const formatDate = (inputDate: string) => {
     return `${day}/${month}/${year}`;
 };
 
+const processDataPart = (part: string) => {
+    const parts = part.split(' ');
+    if (parts.length < 4) return 'No Data';
+
+    const timeStampPart = parts[2].split('+')[0];
+    const timeStamp = parts[1] + ' ' + timeStampPart;
+    const ruleName = parts[3];
+
+    return <span>{ruleName}<br />{timeStamp}</span>;
+};
+
 const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
     const [selectedTimeframe, setSelectedTimeframe] = useState('all');
     const [timeframeOptions, setTimeframeOptions] = useState<timeframeInterface[]>();
+
+    // Function to find the signal data for a trading pair
+    const findSignalData = async (tradingPairName: string) => {
+        const response: ICombination[] = (await RuleService.getTopConnections(tradingPairName)).data;
+        const signalData = response.length > 0 ? response[0].data : null;
+
+        if (!signalData) {
+            return { '1h': 'No Data', '15m': 'No Data', '3m': 'No Data' };
+        }
+    
+        const dataParts = signalData.split('\n');
+        const dataObject = { '1h': '', '15m': '', '3m': '' };
+    
+        dataParts.forEach(part => {
+            if (part.includes('1h')) dataObject['1h'] = part;
+            else if (part.includes('15m')) dataObject['15m'] = part;
+            else if (part.includes('3m')) dataObject['3m'] = part;
+        });
+    
+        return dataObject as SignalData;
+    };
     
     const getTop = async () => {
         try {
-            const response = (await RuleService.getTopTradingPairs()).data;            
-            setPairs([...response]);
+            const response = (await RuleService.getTopTradingPairs()).data;     
+
+            const pairsWithSignals = await Promise.all(response.map(async (pair) => {
+                try {
+                    const signalData = await findSignalData(pair.tradingpairname);
+                    return { ...pair, signalData };
+                } catch (error) {
+                    console.error(`Error fetching signal data for ${pair.tradingpairname}:`, error);
+                    return { ...pair, signalData: null }; // or a default value
+                }
+            }));
+
+            setPairs([...pairsWithSignals]);            
         } catch (e: any) {
             console.error(e);
             setPairs([]);
@@ -131,6 +174,7 @@ const Dumps: FC = () => {
                 clearInterval(fetchInterval);
             };
         }
+
     }, [selectedDate, selectedTimeframe]);
 
     return (
@@ -175,6 +219,9 @@ const Dumps: FC = () => {
                         <th>Цена</th>
                         <th>Change</th>
                         <th>Change %</th>
+                        <th>3m/5m</th>
+                        <th>15m</th>
+                        <th>1h</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,6 +236,10 @@ const Dumps: FC = () => {
                             <td>{elem.price}</td>
                             <td>{elem.change}</td>
                             <td>{elem.changepercent}%</td>
+                            {/* <td>{findSignalData(elem.tradingpairname)}</td> */}
+                            {(['1h', '15m', '3m'] as (keyof SignalData)[]).map((timeFrame) => (
+                                <td key={timeFrame}>{processDataPart(elem.signalData?.[timeFrame] || 'No Data')}</td>
+                            ))}
                         </tr>
                     ))}
                 </tbody>

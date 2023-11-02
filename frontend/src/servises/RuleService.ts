@@ -38,6 +38,10 @@ export default class RuleService{
         return $api.get<ICombination[]>(`/connections/${timeframe}/${type}`);
     }
 
+    static async getTopConnections(pair: string): Promise<AxiosResponse<ICombination[]>>{
+        return $api.get<ICombination[]>(`/connections/${pair}`);
+    }
+
     static async getTradingPairs(): Promise<AxiosResponse<ITradingPair[]>>{
         return $api.get<ITradingPair[]>(`/tradingpairs/`);
     }
