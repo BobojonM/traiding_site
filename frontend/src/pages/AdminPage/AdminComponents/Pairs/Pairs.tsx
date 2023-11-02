@@ -54,6 +54,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
                         <tr>
                             <th>#</th>
                             <th>Монета</th>
+                            <th>%</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,6 +66,7 @@ const Pairs: FC<PairsInterface> = ({position = '', timeframe = ''}) => {
                                         {elem.tradingpairname}.P
                                     </a>
                                 </td>
+                                <td>{elem.changepercent}%</td>
                             </tr>
                         ))}
                     </tbody>

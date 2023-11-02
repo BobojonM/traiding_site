@@ -25,10 +25,15 @@ const processDataPart = (part: string) => {
     const parts = part.split(' ');
     if (parts.length < 4) return 'No Data';
 
+    const timeframe = parts[0];
+   
     const timeStampPart = parts[2].split('+')[0];
     const timeStamp = parts[1] + ' ' + timeStampPart;
     const ruleName = parts[3];
 
+    if (timeframe === '5m' || timeframe === '3m')
+        return <span>{ruleName} {timeframe}<br />{timeStamp}</span>;
+    
     return <span>{ruleName}<br />{timeStamp}</span>;
 };
 
@@ -219,9 +224,9 @@ const Dumps: FC = () => {
                         <th>Цена</th>
                         <th>Change</th>
                         <th>Change %</th>
-                        <th>3m/5m</th>
-                        <th>15m</th>
                         <th>1h</th>
+                        <th>15m</th>
+                        <th>3m/5m</th>
                     </tr>
                 </thead>
                 <tbody>

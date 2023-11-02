@@ -173,7 +173,7 @@ class RulesController {
             }
             const query = `SELECT * FROM tradingpairs
             WHERE ${field} = $1
-            ORDER BY tradingpairname ASC`;
+            ORDER BY changepercent DESC`;
             const result = await pool.query(query, [vnnn]);
             if (result.rows.length > 0) {
                 res.json(result.rows);
