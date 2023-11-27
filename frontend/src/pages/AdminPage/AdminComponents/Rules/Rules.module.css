@@ -15,6 +15,7 @@
     margin: 0 auto;
     justify-content: space-around;
     padding: 2%;   
+    align-items: center;
 }
 
 .menu li{

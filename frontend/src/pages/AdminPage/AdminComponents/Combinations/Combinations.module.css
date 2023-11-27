@@ -47,7 +47,7 @@ caption{
 
 .menu li{
     cursor: pointer;
-    padding: 1% 5%;
+    padding: 10px 20px;
 }
 
 .menu li:hover{
