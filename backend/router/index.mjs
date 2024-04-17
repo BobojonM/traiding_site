@@ -27,7 +27,10 @@ router.put('/rules/status/:id', rulesController.changeStatus);
 router.put('/rules/connection/:id', rulesController.changeConnectionStatus);
 
 // Singals for rules
-router.get('/rules/signals/:name', rulesController.getSignalsForRule);
+router.get('/rules/signals/:name/:timeframe', rulesController.getSignalsForRule);
+
+// Signals for timeframe and pair
+router.get('/timeframes/signals/:timeframe/:pair', rulesController.getSignalsForTimframes)
 
 // Get Trends
 router.get('/trends/:timeframe', rulesController.getTrendsByTimeframe); 
@@ -35,7 +38,7 @@ router.post('/trends/signals', rulesController.getSignalsForTrends);
 
 // Get Connections
 router.get('/connections/:timeframe/:type', rulesController.getConnections);
-router.get('/connections/:pair', rulesController.getTopConnections);
+router.get('/connections/:istop/:timeframe/:pair', rulesController.getTopConnections);
 
 // Get Trading Pairs
 router.get('/tradingpairs/', rulesController.getTradingPairs);

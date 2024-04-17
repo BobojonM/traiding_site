@@ -7,11 +7,21 @@ import { IRule } from "../../../../models/IRule";
 
 interface CombinationsMenu {
     name: string
-    timeframe: '1h' | '4h'
+    timeframe: '15m' | '1h' | '4h'
     type: 'long' | 'short'
 }
 
 const menu: CombinationsMenu[] = [
+    {
+        name: '15 мин Long',
+        timeframe: '15m',
+        type: 'long'
+    },
+    {
+        name: '15 мин Short',
+        timeframe: '15m',
+        type: 'short'
+    },
     {
         name: '1 час Long',
         timeframe: '1h',

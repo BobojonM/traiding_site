@@ -22,8 +22,8 @@ export default class RuleService{
         return $api.put(`/rules/connection/${id}`);
     }
 
-    static async getSignals(ruleName: string): Promise<AxiosResponse<IRuleSignal[]>>{
-        return $api.get<IRuleSignal[]>(`/rules/signals/${ruleName}`);
+    static async getSignals(ruleName: string, timeframe: string): Promise<AxiosResponse<IRuleSignal[]>>{
+        return $api.get<IRuleSignal[]>(`/rules/signals/${ruleName}/${timeframe}`);
     }
 
     static async getTrends(timeframe: string): Promise<AxiosResponse<ITrend[]>>{
@@ -34,12 +34,16 @@ export default class RuleService{
         return $api.post<IRuleSignal[]>(`/trends/signals`, {ids: data});
     }
 
+    static async getSignalsForTimframes(timeframe: string, pair: string): Promise<AxiosResponse<IRuleSignal[]>>{
+        return $api.get<IRuleSignal[]>(`/timeframes/signals/${timeframe}/${pair}`);
+    }
+
     static async getConnections(timeframe: string, type: string): Promise<AxiosResponse<ICombination[]>>{
         return $api.get<ICombination[]>(`/connections/${timeframe}/${type}`);
     }
 
-    static async getTopConnections(pair: string): Promise<AxiosResponse<ICombination[]>>{
-        return $api.get<ICombination[]>(`/connections/${pair}`);
+    static async getTopConnections(istop: boolean, timeframe: number, pair: string, ): Promise<AxiosResponse<ICombination[]>>{
+        return $api.get<ICombination[]>(`/connections/${istop}/${timeframe}/${pair}`);
     }
 
     static async getTradingPairs(): Promise<AxiosResponse<ITradingPair[]>>{

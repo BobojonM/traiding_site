@@ -107,8 +107,8 @@
   }
   
   .buttonsContainer {
-    display: grid;
-    grid-template-columns: repeat(5, 5rem);
+    display: flex;
+    /* grid-template-columns: repeat(5, 5rem); */
     justify-items: center;
     align-items: start;
     gap: 25px;
@@ -126,14 +126,30 @@
     cursor: pointer;
     transition: background-color 0.3s;
   }
+
+  .timeframeButton, .timeframeActive {
+    width: 10%;
+    background-color: #3c9774;
+    text-align: center;
+    color: white;
+    border: 1px transparent;
+    /* max-width: 80%; */
+    padding: 1rem .5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
   
   .dateButton:hover,
   .dateButton:active,
-  .dateButton:focus {
+  .dateButton:focus,
+  .timeframeButton:hover,
+  .timeframeButton:active,
+  .timeframeButton:focus {
     background-color: #45a049;
   }
 
-  .dateActive{
+  .dateActive, .timeframeActive{
     background-color: #39863d;
     border: 1px solid white;
   }

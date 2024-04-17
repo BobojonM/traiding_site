@@ -84,17 +84,45 @@ class RulesController {
     async getSignalsForRule(req, res){
         try{
             const ruleName = req.params.name;
+            const timeframe = req.params.timeframe;
+
             const query = `
             SELECT signalid, tradingpair, timeframe, rule, data, ratio, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
             FROM public.signals
             WHERE rule = $1
-            AND timeframe <> '3m'
-            AND timeframe <> '5m'
+            ${timeframe === 'all' ? "AND timeframe <> '5m'" : `AND timeframe = '${timeframe}'`}
             ORDER BY timestamp DESC
-            LIMIT 100
+            LIMIT 50
             `
             const result = await pool.query(query, [ruleName]);
+            
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.status(404).json({ message: 'Rule not found' });
+            }
+        } catch (error) {
+            console.error('Error getting signals:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
 
+    // Controller to get signals for timeframe and pair
+    async getSignalsForTimframes(req, res){
+        try{
+            const pairName = req.params.pair;
+            const timeframe = req.params.timeframe;
+
+            const query = `
+            SELECT signalid, tradingpair, timeframe, rule, data, ratio, to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
+            FROM public.signals
+            WHERE tradingpair = $1
+            AND timeframe = $2
+            ORDER BY timestamp DESC
+            LIMIT 1
+            `
+            const result = await pool.query(query, [pairName, timeframe]);
+            
             if (result.rows.length > 0) {
                 res.json(result.rows);
             } else {
@@ -117,7 +145,7 @@ class RulesController {
             FROM public.trends
             WHERE timeframe = $1
             ORDER BY timestamp DESC
-            LIMIT 100
+            LIMIT 50
             `
             const result = await pool.query(query, [timeframe]);
 
@@ -197,7 +225,7 @@ class RulesController {
             WHERE timeframe = $1
             AND type = $2
             ORDER BY timestamp DESC
-            LIMIT 100
+            LIMIT 50
             `
             const result = await pool.query(query, [timeframe, type]);
 
@@ -214,22 +242,26 @@ class RulesController {
 
     async getTopConnections(req, res){
         try{
+            const timeframe = req.params.timeframe;
+            const tf = timeframe === '1' ? '1h':'15m';
+            
             const pair = req.params.pair;
+
             const query = `
             SELECT connectid, tradingpair, data, 
                 to_char(timestamp, 'YYYY-MM-DD HH24:MI:SSOF') AS timestamp
             FROM public.connections
-            WHERE timeframe = '1h'
-            AND tradingpair = $1
+            WHERE timeframe = $1
+            AND tradingpair = $2
             ORDER BY timestamp DESC
             LIMIT 1
             `
-            const result = await pool.query(query, [pair]);
+            const result = await pool.query(query, [tf, pair]);
 
             if (result.rows.length > 0) {
                 res.json(result.rows);
             } else {
-                res.status(404).json({ message: 'Not found' });
+                res.status(404).json({ message: 'Not found top' });
             }
         } catch (error) {
             console.error('Error getting connections:', error);
@@ -266,8 +298,15 @@ class RulesController {
             `
             const result = await pool.query(query);
 
-            if (result.rows.length > 0) {
-                res.json(result.rows);
+            const query2 = `
+            SELECT * FROM public.tradingpairs
+            WHERE tradingpairname = 'BTCUSDT'
+            `
+            const result2 = await pool.query(query2);
+
+            if (result.rows.length > 0 && result2.rows.length > 0) {
+                const combinedResults = result.rows.concat(result2.rows);
+                res.json(combinedResults);
             } else {
                 res.status(404).json({ message: 'Not found' });
             }
@@ -345,7 +384,7 @@ class RulesController {
             FROM public.toppairs
             WHERE timeframe = '1d'
             ORDER BY timestamp DESC
-            LIMIT 9`;
+            LIMIT 4`;
 
             const result = await pool.query(query);
 
