@@ -1,6 +1,7 @@
 .trends{
     width: 95%;
-    background-color: #3b3b3b;
+    /* background-color: #3b3b3b; */
+    background-color: #2a2e39;
     min-height: 80vh;
     text-align: center;
     border-radius: 30px;
@@ -17,17 +18,20 @@
 
 .trendTable th,
 .trendTable td {
-    border-bottom: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd; */
+    border-bottom: 1px solid #646464;
     padding: 8px;
     text-align: center;
 }
 
 .trendTable th {
-    background-color: #575757;
+    /* background-color: #575757; */
+    background-color: #131722;
 }
 
 .trendTable tr:nth-child(even) {
-    background-color: #575757;
+    /* background-color: #575757; */
+    background-color: #131722;
 }
 
 .coloredSquare {
@@ -44,6 +48,13 @@
     justify-content: space-between;
     cursor: pointer;
     color: #5b5ddb;
-    border-bottom: 1px dashed white;
+    /* border-bottom: 1px dashed white; */
+    border-bottom: 1px dashed #646464;
     text-align: center;
+}
+
+.trendsCandleNum {
+    display: flex;
+    align-content: center;
+    justify-content: center;
 }

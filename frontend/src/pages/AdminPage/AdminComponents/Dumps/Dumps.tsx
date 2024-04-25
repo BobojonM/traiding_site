@@ -29,13 +29,16 @@ const processDataPart = (part: string) => {
     const timeframe = parts[0];
    
     const timeStampPart = parts[2].split('+')[0];
-    const timeStamp = parts[1] + ' ' + timeStampPart;
+    const hourwithmin = timeStampPart.split(':')[0] + ':' + timeStampPart.split(':')[1]; 
+    const timeStamp = parts[1] + ' ' + hourwithmin;
     const ruleName = parts[3];
 
+    const ruleNameWithColor = <span className={ruleName.includes("Long") ? styles.longRuleStyle : styles.shortRuleStyle}>{ruleName}</span>
+
     if (timeframe === '5m' || timeframe === '3m')
-        return <span>{ruleName} {timeframe}<br />{timeStamp}</span>;
+        return <span>{ruleNameWithColor} {timeframe}<br />{timeStamp}</span>;
     
-    return <span>{ruleName}<br />{timeStamp}</span>;
+    return <span>{ruleNameWithColor}<br />{timeStamp}</span>;
 };
 
 const getDataPart = (part: string) => {
@@ -45,14 +48,14 @@ const getDataPart = (part: string) => {
     return new Date(`${parts[1]} ${parts[2]}`);
 }
 
-const comparePairs = (a: ITradingPair, b: ITradingPair) => {
+const comparePairsByData = (a: ITradingPair, b: ITradingPair) => {
     // Handle cases where signalData is null
     if (!a.signalData && !b.signalData) return 0; // Both are null, considered equal
     if (!a.signalData) return 1; // Null values go last
     if (!b.signalData) return 1; // Null values go last
 
     if (a.tradingpairname === "BTCUSDT") return -1;
-    if (b.tradingpairname === "BTCUSDT") return -1;
+    if (b.tradingpairname === "BTCUSDT") return 1;
 
     // Compare the '3m' property
     const aValue = getDataPart(a.signalData["3m"]);
@@ -63,9 +66,24 @@ const comparePairs = (a: ITradingPair, b: ITradingPair) => {
     return 0;
 }
 
+const comparePairsByPercent = (a: ITradingPair, b: ITradingPair) => {
+    // Handle cases where signalData is null
+    if (!a.signalData && !b.signalData) return 0; // Both are null, considered equal
+    if (!a.signalData) return 1; // Null values go last
+    if (!b.signalData) return 1; // Null values go last
+
+    if (a.tradingpairname === "BTCUSDT") return -1;
+    if (b.tradingpairname === "BTCUSDT") return 1;
+
+    if (a.changepercent < b.changepercent) return 1;
+    if (a.changepercent > b.changepercent) return -1;
+    return 0;
+}
+
 const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
+    const [selectedDateId, setSelectedDateId] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
     const [selectedTimeframe, setSelectedTimeframe] = useState('all');
     const [timeframeOptions, setTimeframeOptions] = useState<timeframeInterface[]>();
@@ -117,8 +135,8 @@ const Dumps: FC = () => {
     }
 
     // Function to find the signal data for a trading pair
-    const findSignalResponse = (response?: ICombination) => {        
-        const signalData = response?.data ?? null;
+    const findSignalResponse = (response?: string) => {        
+        const signalData = response ?? null;
         const initData =  { '1h': 'No Data 2', '15m': 'No Data 2', '3m': 'No Data 2' };
 
         if (signalData === null) {
@@ -141,6 +159,16 @@ const Dumps: FC = () => {
     
         return dataObject as SignalData;
     };
+
+    const sortByDate = () => {
+        pairs.sort(comparePairsByData);
+        setPairs([...pairs]);      
+    }
+
+    const sortByPercent = () => {
+        pairs.sort(comparePairsByPercent);
+        setPairs([...pairs]);      
+    }
     
     const getTop = async () => {
         try {
@@ -157,7 +185,7 @@ const Dumps: FC = () => {
             }));
 
             // Sort the pairs by signalData
-            pairsWithSignals.sort(comparePairs);
+            pairsWithSignals.sort(comparePairsByData);
 
             setPairs([...pairsWithSignals]);            
         } catch (e: any) {
@@ -186,7 +214,7 @@ const Dumps: FC = () => {
                 label: hours + ':00' 
             };
         });
-        if(selectedDate === 0){
+        if(selectedDate === 0 || selectedDate === 1){
             setTimeframeOptions([{ value: 'all', label: 'Текущие' }, ...formattedTimeframes]);
         }
         else {
@@ -207,7 +235,9 @@ const Dumps: FC = () => {
 
     const changeDate = async (id: number, index: number) => {
         setSelectedDate(index);
-        if (id !== 0){
+        setSelectedDateId(id);
+
+        if (index !== 0 && index !== 1){
             const response = (await RuleService.getDumpDataForDate(id));
             const newData = response.data[0].data;
     
@@ -235,8 +265,31 @@ const Dumps: FC = () => {
             });
 
             // Sort the pairs by signalData
-            newPairs.sort(comparePairs);
+            newPairs.sort(comparePairsByData);
 
+            setPairs(newPairs);
+        } else if (index === 1) {
+            const response = (await RuleService.getDumpDataForDate(id));
+            const newData = response.data[0].data;
+    
+            const newPairs: ITradingPair[] = [];
+            for (const key of Object.keys(newData)) {
+                const tradingPair: DataInterace = newData[key];
+                const {change, changepercent, pair, price} = tradingPair;
+                    
+                const signalData = timeframe === 3 ? (await findSignals(pair)) : (await findSignalData(pair));
+                
+                newPairs.push({
+                    tradingpairname: pair,
+                    price,
+                    change,
+                    changepercent,
+                    signalData
+                });
+            }
+
+            // Sort the pairs by signalData
+            newPairs.sort(comparePairsByData);
             setPairs(newPairs);
         }
     };
@@ -271,12 +324,10 @@ const Dumps: FC = () => {
             });
 
             // Sort the pairs by signalData
-            newPairs.sort(comparePairs);
-            
+            newPairs.sort(comparePairsByData);
             setPairs(newPairs);
         }
-    };
-      
+    }; 
 
     useEffect(() => {
         if(selectedDate === 0 || selectedDate === 1) {
@@ -295,13 +346,22 @@ const Dumps: FC = () => {
             return () => {
                 clearInterval(fetchInterval);
             };
+        } else if (selectedDate === 1  && selectedTimeframe === 'all') {
+            getDates();
+            changeDate(selectedDateId, selectedDate);
+            const fetchInterval = setInterval(() => {
+                changeDate(selectedDateId, selectedDate);
+            }, 30000);
+            return () => {
+                clearInterval(fetchInterval);
+            };
         }
 
-    }, [selectedDate, selectedTimeframe, timeframe]);
+    }, [selectedDate, selectedDateId, selectedTimeframe, timeframe]);
 
     return (
         <div className={styles.tradingpairs}>
-            <h1>Pumps/Dumps</h1>
+            <h1>Топ-монеты</h1>
             <div className={styles.calendar}>
                 <div className={styles.buttonsContainer}>
                     <button className={timeframe === 1 ? styles.timeframeActive : styles.timeframeButton}
@@ -359,16 +419,16 @@ const Dumps: FC = () => {
                         <th>Монета</th>
                         <th>Цена</th>
                         <th>Change</th>
-                        <th>Change %</th>
+                        <th onClick={() => sortByPercent()} title={"Click to Sort by %"} className={styles.changeByPercent}>Change %</th>
                         {timeframe === 1 && <th>1h</th>}
                         {timeframe !== 3 && <th>15m</th>}
-                        <th>3m/5m</th>
+                        <th onClick={() => sortByDate()} title={"Click to Sort by Date"} className={styles.changeByDate}>3m/5m</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {pairs.map((elem: ITradingPair, index) => (
+                    {pairs.slice(0, 10).map((elem: ITradingPair, index) => (
                         <tr key={index}>
-                            <td>{index}</td>
+                            <td>{index+1}</td>
                             <td>
                                 <a href={`https://www.tradingview.com/chart/?symbol=BINANCE:${elem.tradingpairname}.P`} target="_blank">
                                             {elem.tradingpairname}.P

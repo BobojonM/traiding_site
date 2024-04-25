@@ -112,8 +112,10 @@ const Trends: FC<TrendsInterface> = ({ timeframe }) => {
           {trends.map((elem: ITrend) => (
             <tr key={elem.trendid}>
               <td>
-                #{(elem.candle_num - 1)}
-                <span className={styles.coloredSquare} style={{ backgroundColor: elem.candle_color }}></span>
+                <div className={styles.trendsCandleNum}>
+                  #{(elem.candle_num - 1)}
+                  <span className={styles.coloredSquare} style={{ backgroundColor: elem.candle_color }}></span>
+                </div>
               </td>
               <td>
                 <span className={styles.coins} onClick={() => showCoins('VN', timeframe.val)}>

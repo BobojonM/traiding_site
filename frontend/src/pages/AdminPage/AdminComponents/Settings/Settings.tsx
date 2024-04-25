@@ -75,6 +75,18 @@ const Settings: FC = () => {
                 <span>{leverage}</span>
             )}
 
+            <label className={styles.label}>Общий риск капитала:</label>
+            {isEditing ? (
+                <input
+                    className={styles.input}
+                    type="text"
+                    value={"1"}
+                    onChange={(e) => setKey(e.target.value)}
+                />
+            ) : (
+                <span className={styles.span}>1%</span>
+            )}
+
             <label className={styles.label}>Ключ:</label>
             {isEditing ? (
                 <input
@@ -84,7 +96,7 @@ const Settings: FC = () => {
                     onChange={(e) => setKey(e.target.value)}
                 />
             ) : (
-                <span className={styles.span}>{key}</span>
+                <span className={styles.span}>****************</span>
             )}
 
             <label className={styles.label}>Секретный ключ:</label>
@@ -96,7 +108,7 @@ const Settings: FC = () => {
                     onChange={(e) => setSecretKey(e.target.value)}
                 />
             ) : (
-                <span className={styles.span}>{secretKey}</span>
+                <span className={styles.span}>****************</span>
             )}
         </div>
             
