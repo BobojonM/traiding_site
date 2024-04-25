@@ -361,7 +361,7 @@ const Dumps: FC = () => {
 
     return (
         <div className={styles.tradingpairs}>
-            <h1>Топ-монеты</h1>
+            <h1>Top Coins</h1>
             <div className={styles.calendar}>
                 <div className={styles.buttonsContainer}>
                     <button className={timeframe === 1 ? styles.timeframeActive : styles.timeframeButton}

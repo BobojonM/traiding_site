@@ -14,7 +14,7 @@ interface NavBarProps {
 const buttons: Section[] = [
     {
         name: 'dump-pump',
-        val: 'Топ-монеты'
+        val: 'Top Coins'
     },
     {
         name: 'rules',
