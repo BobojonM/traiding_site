@@ -256,12 +256,16 @@ class RulesController {
             ORDER BY timestamp DESC
             LIMIT 1
             `
+            //AND timestamp >= NOW() - interval '5 days'
+
+            
             const result = await pool.query(query, [tf, pair]);
 
             if (result.rows.length > 0) {
                 res.json(result.rows);
             } else {
-                res.status(404).json({ message: 'Not found top' });
+                res.json([]);
+                // res.status(404).json({ message: 'Not found top' });
             }
         } catch (error) {
             console.error('Error getting connections:', error);
@@ -294,7 +298,7 @@ class RulesController {
             SELECT * FROM public.tradingpairs
             WHERE future = True
             ORDER BY changepercent DESC
-            LIMIT 12 
+            LIMIT 9
             `
             const result = await pool.query(query);
 

@@ -1,6 +1,7 @@
 .tradingpairs{
     width: 95%;
-    background-color: #3b3b3b;
+    /* background-color: #3b3b3b; */
+    background-color: #2a2e39;
     min-height: 80vh;
     text-align: center;
     border-radius: 30px;
@@ -17,17 +18,20 @@
 
 .pairsTable th,
 .pairsTable td {
-    border-bottom: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd; */
+    border-bottom: 1px solid #646464;
     padding: 8px;
     text-align: center;
 }
 
 .pairsTable th {
-    background-color: #575757;
+    /* background-color: #575757; */
+    background-color: #131722;
 }
 
 .pairsTable tr:nth-child(even) {
-    background-color: #575757;
+    /* background-color: #575757; */
+    background-color: #131722;
 }
 
 .menu{
