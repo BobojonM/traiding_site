@@ -4,7 +4,7 @@ import styles from './Dumps.module.css';
 import { ITradingPair, SignalData } from "../../../../models/ITradingPair";
 import RuleService from "../../../../servises/RuleService";
 import { DataInterace, IDate } from "../../../../models/IDates";
-import { ICombination } from "../../../../models/ICombination";
+import { comparePairsByData, comparePairsByPercent, formatDate, formatTimestamp } from "./functions";
 import { IRuleSignal } from "../../../../models/IRuleSignal";
 
 interface timeframeInterface {
@@ -14,71 +14,25 @@ interface timeframeInterface {
 
 const today = new Date();
 
-const formatDate = (inputDate: string) => {
-    const date = new Date(inputDate);
-    const day = date.getDate().toString().padStart(2, '0'); 
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
-    const year = date.getFullYear(); 
-    return `${day}/${month}/${year}`;
+const processDataPart = (part?: string) => {
+    if (part) {
+        const parts = part.split(' ');
+        if (parts.length < 4) return 'No Data';
+
+        const timeframe = parts[0];
+        const timeStamp = formatTimestamp(parts[1]);
+        const ruleName = parts[2];
+        const data = parts[3];
+
+        const ruleNameWithColor = <span className={data === 'long' ? styles.longRuleStyle : styles.shortRuleStyle}>{ruleName}</span>
+
+        if (timeframe === '5m' || timeframe === '3m')
+            return <span>{ruleNameWithColor} {timeframe}<br />{timeStamp}</span>;
+        
+        return <span>{ruleNameWithColor}<br />{timeStamp}</span>;
+        
+    }
 };
-
-const processDataPart = (part: string) => {
-    const parts = part.split(' ');
-    if (parts.length < 4) return 'No Data';
-
-    const timeframe = parts[0];
-   
-    const timeStampPart = parts[2].split('+')[0];
-    const hourwithmin = timeStampPart.split(':')[0] + ':' + timeStampPart.split(':')[1]; 
-    const timeStamp = parts[1] + ' ' + hourwithmin;
-    const ruleName = parts[3];
-
-    const ruleNameWithColor = <span className={ruleName.includes("Long") ? styles.longRuleStyle : styles.shortRuleStyle}>{ruleName}</span>
-
-    if (timeframe === '5m' || timeframe === '3m')
-        return <span>{ruleNameWithColor} {timeframe}<br />{timeStamp}</span>;
-    
-    return <span>{ruleNameWithColor}<br />{timeStamp}</span>;
-};
-
-const getDataPart = (part: string) => {
-    const parts = part.split(' ');
-    if (parts.length < 4) return new Date('1999-11-23 00:00:00+06:00');
-
-    return new Date(`${parts[1]} ${parts[2]}`);
-}
-
-const comparePairsByData = (a: ITradingPair, b: ITradingPair) => {
-    // Handle cases where signalData is null
-    if (!a.signalData && !b.signalData) return 0; // Both are null, considered equal
-    if (!a.signalData) return 1; // Null values go last
-    if (!b.signalData) return 1; // Null values go last
-
-    if (a.tradingpairname === "BTCUSDT") return -1;
-    if (b.tradingpairname === "BTCUSDT") return 1;
-
-    // Compare the '3m' property
-    const aValue = getDataPart(a.signalData["3m"]);
-    const bValue = getDataPart(b.signalData["3m"]);
-
-    if (aValue < bValue) return 1;
-    if (aValue > bValue) return -1;
-    return 0;
-}
-
-const comparePairsByPercent = (a: ITradingPair, b: ITradingPair) => {
-    // Handle cases where signalData is null
-    if (!a.signalData && !b.signalData) return 0; // Both are null, considered equal
-    if (!a.signalData) return 1; // Null values go last
-    if (!b.signalData) return 1; // Null values go last
-
-    if (a.tradingpairname === "BTCUSDT") return -1;
-    if (b.tradingpairname === "BTCUSDT") return 1;
-
-    if (a.changepercent < b.changepercent) return 1;
-    if (a.changepercent > b.changepercent) return -1;
-    return 0;
-}
 
 const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
@@ -87,78 +41,31 @@ const Dumps: FC = () => {
     const [dates, setDates] = useState<IDate[]>([]);
     const [selectedTimeframe, setSelectedTimeframe] = useState('all');
     const [timeframeOptions, setTimeframeOptions] = useState<timeframeInterface[]>();
-    const [timeframe, setTimeframe] = useState(1);
-    const [timeframes, setTimeframes] = useState(['1h', '15m', '3m']);
+    const [timeframe, setTimeframe] = useState(4);
+    const [timeframes, setTimeframes] = useState(['4h', '3m']);
 
     // Function to find the signal data for a trading pair
-    const findSignalData = async (tradingPairName: string) => {  
-        const response: ICombination[] = (await RuleService.getTopConnections(true, timeframe, tradingPairName)).data;  
-        
-        const signalData = response.length > 0 ? response[0].data : null;
-        const initData =  { '1h': 'No Data', '15m': 'No Data', '3m': 'No Data' };
 
-        if (!signalData) {
-            return initData;
-        }
-    
-        const dataParts = signalData.split('\n');
-        const dataObject = { '1h': '', '15m': '', '3m': 'No Data' };
-    
-        dataParts.forEach(part => {
-            if (part.includes('1h')) dataObject['1h'] = part;
-            else if (part.includes('15m')) dataObject['15m'] = part;
-            else if (part.includes('3m')) dataObject['3m'] = part;
-            else if (part.includes('5m')) dataObject['3m'] = part;
-        });
-
-        if (dataObject['3m'] === 'No Data') {
-            return initData;
-        }
-    
-        return dataObject as SignalData;
-    };
-
-    const findSignals = async (tradingPairName: string) => {
-        const response: IRuleSignal[] = (await RuleService.getSignalsForTimframes('3m', tradingPairName)).data;
-        const initData =  { '1h': 'No Data', '15m': 'No Data', '3m': 'No Data' };
+    const findSignalData = async (tradingPairName: string) => {
+        const response: IRuleSignal[] = (await RuleService.getTopSignal(timeframe, tradingPairName)).data;
+        const initData =  { '4h': 'No Data', '1h': 'No Data', '15m': 'No Data', '3m': 'No Data' };
 
         if (response.length === 0) {
             return initData;
         }
-
-        const data  = `${response[0].timeframe} ${response[0].timestamp} ${response[0].rule}`;
-
-        
-        const dataObject = { '1h': 'No Data', '15m': 'No Data', '3m': data };
-
-        return dataObject as SignalData;
-    }
-
-    // Function to find the signal data for a trading pair
-    const findSignalResponse = (response?: string) => {        
-        const signalData = response ?? null;
-        const initData =  { '1h': 'No Data 2', '15m': 'No Data 2', '3m': 'No Data 2' };
-
-        if (signalData === null) {
-            return initData as SignalData;
-        }
     
-        const dataParts = signalData.split('\n');
-        const dataObject = { '1h': '', '15m': '', '3m': 'No Data 2' };
+        const dataObject: SignalData = { '4h': '', '1h': '', '15m': '', '3m': 'No Data' };
     
-        dataParts.forEach(part => {
-            if (part.includes('1h')) dataObject['1h'] = part;
-            else if (part.includes('15m')) dataObject['15m'] = part;
-            else if (part.includes('3m')) dataObject['3m'] = part;
-            else if (part.includes('5m')) dataObject['3m'] = part;
+        response.forEach(part => {
+            if (part.timeframe === '1h') dataObject['1h'] = `${part.timeframe} ${part.timestamp} ${part.rule} ${part.data}`;
+            else if (part.timeframe === '15m') dataObject['15m'] = `${part.timeframe} ${part.timestamp} ${part.rule} ${part.data}`;
+            else if (part.timeframe === '4h') dataObject['4h'] = `${part.timeframe} ${part.timestamp} ${part.rule} ${part.data}`;
+            else if (part.timeframe === '3m') dataObject['3m'] = `${part.timeframe} ${part.timestamp} ${part.rule} ${part.data}`;
+            else if (part.timeframe === '5m') dataObject['3m'] = `${part.timeframe} ${part.timestamp} ${part.rule} ${part.data}`;
         });
-
-        if (dataObject['3m'] === 'No Data 2') {
-            return initData;
-        }
     
-        return dataObject as SignalData;
-    };
+        return dataObject;
+    }
 
     const sortByDate = () => {
         pairs.sort(comparePairsByData);
@@ -176,7 +83,7 @@ const Dumps: FC = () => {
             
             const pairsWithSignals = await Promise.all(response.map(async (pair) => {
                 try {
-                    const signalData = timeframe === 3 ? (await findSignals(pair.tradingpairname)) : (await findSignalData(pair.tradingpairname));
+                    const signalData = (await findSignalData(pair.tradingpairname));
                     return { ...pair, signalData };
                 } catch (error) {
                     console.error(`Error fetching signal data for ${pair.tradingpairname}:`, error);
@@ -226,73 +133,63 @@ const Dumps: FC = () => {
         setTimeframe(timeframe)
         if (timeframe === 15){
             setTimeframes(['15m', '3m'])
-        } else if (timeframe === 3) {
-            setTimeframes(['3m'])
+        } else if (timeframe === 4) {
+            setTimeframes(['4h', '3m'])
         } else {
-            setTimeframes(['1h', '15m', '3m'])
+            setTimeframes(['1h', '3m'])
         }
     }
 
     const changeDate = async (id: number, index: number) => {
         setSelectedDate(index);
         setSelectedDateId(id);
-
-        if (index !== 0 && index !== 1){
-            const response = (await RuleService.getDumpDataForDate(id));
+    
+        if (index !== 0 && index !== 1) {
+            const response = await RuleService.getDumpDataForDate(id);
             const newData = response.data[0].data;
     
-            const newPairs: ITradingPair[] = [];
-            Object.keys(newData).forEach((key: string) => {
+            const promises: Promise<ITradingPair>[] = Object.keys(newData).map(async (key: string) => {
                 const tradingPair: DataInterace = newData[key];
-                const {change, changepercent, pair, price, data1h, data15m, data3m} = tradingPair;
-
-                var data = data15m;
-                if (timeframe === 1){
-                    data = data1h;
-                } else if (timeframe === 3){
-                    data = data3m;
-                }
-                    
-                const signalData = findSignalResponse(data);
-            
-                newPairs.push({
+                const { change, changepercent, pair, price } = tradingPair;
+                const signalData = await findSignalData(pair);
+                return {
                     tradingpairname: pair,
                     price,
                     change,
                     changepercent,
                     signalData
-                });
+                };
             });
-
-            // Sort the pairs by signalData
+    
+            const newPairs = await Promise.all(promises);
             newPairs.sort(comparePairsByData);
-
+    
             setPairs(newPairs);
         } else if (index === 1) {
-            const response = (await RuleService.getDumpDataForDate(id));
+            const response = await RuleService.getDumpDataForDate(id);
             const newData = response.data[0].data;
     
-            const newPairs: ITradingPair[] = [];
-            for (const key of Object.keys(newData)) {
+            const promises: Promise<ITradingPair>[] = Object.keys(newData).map(async (key: string) => {
                 const tradingPair: DataInterace = newData[key];
-                const {change, changepercent, pair, price} = tradingPair;
-                    
-                const signalData = timeframe === 3 ? (await findSignals(pair)) : (await findSignalData(pair));
-                
-                newPairs.push({
+                const { change, changepercent, pair, price, lastupdate } = tradingPair;
+                const signalData = await findSignalData(pair);
+                return {
                     tradingpairname: pair,
                     price,
                     change,
                     changepercent,
-                    signalData
-                });
-            }
-
-            // Sort the pairs by signalData
+                    signalData,
+                    lastupdate
+                };
+            });
+    
+            const newPairs = await Promise.all(promises);
             newPairs.sort(comparePairsByData);
-            setPairs(newPairs);
+    
+            setPairs([...newPairs]);
         }
     };
+    
 
     const handleTimeframeChange = async (value: string) => {
         setSelectedTimeframe(value);
@@ -300,32 +197,24 @@ const Dumps: FC = () => {
             const response = (await RuleService.getDumpForHours(parseInt(value)));
             const newData = response.data[0].data;
     
-            const newPairs: ITradingPair[] = [];
-            Object.keys(newData).forEach((key: string) => {
+            const promises: Promise<ITradingPair>[] = Object.keys(newData).map(async (key: string) => {
                 const tradingPair: DataInterace = newData[key];
-                const {change, changepercent, pair, price, data1h, data15m, data3m} = tradingPair;
-
-                var data = data15m;
-                if (timeframe === 1){
-                    data = data1h;
-                } else if (timeframe === 3){
-                    data = data3m;
-                }
-
-                const signalData = findSignalResponse(data);
-                
-                newPairs.push({
+                const { change, changepercent, pair, price, lastupdate } = tradingPair;
+                const signalData = await findSignalData(pair);
+                return {
                     tradingpairname: pair,
                     price,
                     change,
                     changepercent,
-                    signalData
-                });
+                    signalData,
+                    lastupdate
+                };
             });
-
-            // Sort the pairs by signalData
+    
+            const newPairs = await Promise.all(promises);
             newPairs.sort(comparePairsByData);
-            setPairs(newPairs);
+    
+            setPairs([...newPairs]);
         }
     }; 
 
@@ -364,20 +253,19 @@ const Dumps: FC = () => {
             <h1>Top Coins</h1>
             <div className={styles.calendar}>
                 <div className={styles.buttonsContainer}>
-                    <button className={timeframe === 1 ? styles.timeframeActive : styles.timeframeButton}
-                        onClick={() => changeTimeframe(1)}>
-                       1h
+                    <button className={timeframe === 4 ? styles.timeframeActive : styles.timeframeButton}
+                        onClick={() => changeTimeframe(4)}>
+                       4h
                     </button>
 
-                    
+                    <button className={timeframe === 1 ? styles.timeframeActive : styles.timeframeButton}
+                        onClick={() => changeTimeframe(1)}>
+                        1h
+                    </button>
+
                     <button className={timeframe === 15 ? styles.timeframeActive : styles.timeframeButton}
                         onClick={() => changeTimeframe(15)}>
                         15m
-                    </button>
-
-                    <button className={timeframe === 3 ? styles.timeframeActive : styles.timeframeButton}
-                        onClick={() => changeTimeframe(3)}>
-                        3m
                     </button>
                 </div>
                 <br></br>
@@ -421,8 +309,10 @@ const Dumps: FC = () => {
                         <th>Change</th>
                         <th onClick={() => sortByPercent()} title={"Click to Sort by %"} className={styles.changeByPercent}>Change %</th>
                         {timeframe === 1 && <th>1h</th>}
-                        {timeframe !== 3 && <th>15m</th>}
-                        <th onClick={() => sortByDate()} title={"Click to Sort by Date"} className={styles.changeByDate}>3m/5m</th>
+                        {timeframe === 4 && <th>4h</th>}
+                        {timeframe === 15 && <th>15m</th>}
+                        <th>3m/5m</th>
+                        <th onClick={() => sortByDate()} title={"Click to Sort by Date"} className={styles.changeByDate}>Last Update</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -441,6 +331,7 @@ const Dumps: FC = () => {
                             {(timeframes as (keyof SignalData)[]).map((timeFrame) => (
                                 <td key={timeFrame}>{processDataPart(elem.signalData?.[timeFrame] || 'No Data')}</td>
                             ))}
+                            <td>{formatTimestamp(elem.lastupdate)}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -449,4 +340,5 @@ const Dumps: FC = () => {
     )
 }
 
+Dumps.displayName = 'Dumps';
 export default Dumps;

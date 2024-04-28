@@ -1,7 +1,8 @@
 export type SignalData = {
-    '1h': string;
-    '15m': string;
-    '3m': string;
+    '4h': string
+    '1h': string
+    '15m': string
+    '3m': string
 };
 
 export interface ITradingPair{
@@ -16,5 +17,6 @@ export interface ITradingPair{
     hour?: boolean
     four?: boolean
     day?: boolean
-    signalData?: SignalData | null;
+    lastupdate?: string
+    signalData?: SignalData | null
 }

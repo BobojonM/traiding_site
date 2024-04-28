@@ -659,4 +659,6 @@ router.get('/dumps/dates/time/:date', rulesController.getFourHoursForDate);
  */
 router.get('/dumps/time/:id', rulesController.getDumpForHours);
 
+router.get('/dumps/topsignals/:timeframe/:pair', rulesController.getTopSignal);
+
 export default router;

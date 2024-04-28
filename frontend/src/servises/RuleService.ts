@@ -85,4 +85,8 @@ export default class RuleService{
     static async getDumpForHours(id: number): Promise<AxiosResponse<Record<string, Record<string, DataInterace>>[]>>{
         return $api.get<Record<string, Record<string, DataInterace>>[]>(`/dumps/time/${id}`);
     }
+
+    static async getTopSignal(timeframe: number, pair: string): Promise<AxiosResponse<IRuleSignal[]>>{
+        return $api.get<IRuleSignal[]>(`/dumps/topsignals/${timeframe}/${pair}`);
+    }
 }

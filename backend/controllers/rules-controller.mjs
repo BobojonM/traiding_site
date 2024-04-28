@@ -243,7 +243,7 @@ class RulesController {
     async getTopConnections(req, res){
         try{
             const timeframe = req.params.timeframe;
-            const tf = timeframe === '1' ? '1h':'15m';
+            const tf = timeframe === '1' ? '1h' : timeframe === '4' ? '4h' : '15m';
             
             const pair = req.params.pair;
 
@@ -257,7 +257,6 @@ class RulesController {
             LIMIT 1
             `
             //AND timestamp >= NOW() - interval '5 days'
-
             
             const result = await pool.query(query, [tf, pair]);
 
@@ -463,6 +462,43 @@ class RulesController {
             }
         } catch (error) {
             console.error('Error getting data:', error);
+            res.status(500).json({ message: 'An error occurred retrieving the data' });
+        }
+    }
+
+    // Get Last signal for the top coins page
+    async getTopSignal(req, res){
+        try{
+            const timeframe = req.params.timeframe;
+            const tf = timeframe === '1' ? '1h' : timeframe === '4' ? '4h' : '15m';
+            
+            const pair = req.params.pair;
+
+            const query = `
+            (SELECT * FROM public.signals
+            WHERE (rule = 'NN' OR rule = 'VN') AND
+                (tradingpair = $1) AND
+                (timeframe = $2)
+            ORDER BY timestamp DESC
+            LIMIT 1)
+            UNION ALL
+            (SELECT * FROM public.signals
+            WHERE (rule <> 'NN' OR rule <> 'VN') AND
+                (tradingpair = $1) AND
+                (timeframe = '5m' OR timeframe = '3m')
+            ORDER BY timestamp DESC
+            LIMIT 1)
+            `;
+
+            const result = await pool.query(query, [pair, tf]);
+
+            if (result.rows.length > 0) {
+                res.json(result.rows);
+            } else {
+                res.json([]);
+            }
+        } catch (error) {
+            console.error('Error getting connections:', error);
             res.status(500).json({ message: 'An error occurred retrieving the data' });
         }
     }

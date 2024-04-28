@@ -8,6 +8,7 @@ export interface DataInterace {
     changepercent: number
     pair: string
     price: number
+    lastupdate?: string
     data1h?: string
     data15m?: string
     data3m?: string

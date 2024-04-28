@@ -9,5 +9,6 @@ export interface IRuleSignal{
     timeframe: string
     rule: string
     ratio: ICrPr
+    data: string
     timestamp: string
 }
