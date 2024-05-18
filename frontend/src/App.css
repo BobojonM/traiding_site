@@ -1,9 +1,8 @@
-.loader{
+.loader {
     position: fixed;
-    top: 40%;
-    bottom: 40%;
-    left: 43%;
-    right: 43%;
+    top: calc(50% - 60px);
+    left: calc(50% - 60px);
+    transform: translate(-50%, -50%);
     border: 16px solid #f3f3f3;
     border-top: 16px solid #3498db;
     border-radius: 50%;

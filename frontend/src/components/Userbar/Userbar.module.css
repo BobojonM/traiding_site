@@ -1,16 +1,32 @@
+.iconButton {
+    position: fixed !important;
+    top: 1rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
+}
+.icon {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .pannel{
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 300px; /* Set a fixed width for the panel */
+    max-width: 300px;
+    height: 100vh;
     padding: 20px;
-    box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.1); 
+    background-color: #131722;
 }
 
 .content{
     text-align: center;
+    color: white;
+}
+
+.header {
+    background-color: #2a2e39;
 }
 
 .settings {
     margin: 1rem;
 }
+
