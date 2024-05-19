@@ -1,6 +1,4 @@
 .tradingpairs{
-    width: 95%;
-    /* background-color: #3b3b3b; */
     background-color: #2a2e39;
     min-height: 80vh;
     text-align: center;
@@ -145,7 +143,7 @@
   }
 
   .timeframeButton, .timeframeActive {
-    width: 10%;
+    width: 70px;
     background-color: #3c9774;
     text-align: center;
     color: white;
@@ -199,3 +197,51 @@
     outline: none;
   }
 
+
+.timestamp {
+    font-size: 0.9em;
+    color: #aaa;
+  }
+
+.cardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+  background-color: #131722;
+  border: 1px solid #646464;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cardBody div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #646464;
+}
+
+
+@media (max-width: 1024px) {
+  .selectContainer {
+    width: 100%;
+  }
+}

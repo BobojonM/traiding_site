@@ -1,47 +1,83 @@
-.trends{
-    width: 95%;
-    /* background-color: #3b3b3b; */
-    background-color: #2a2e39;
-    min-height: 80vh;
-    text-align: center;
-    border-radius: 30px;
-    padding: 1%;
-    margin: 0 auto;
+.trends {
+  background-color: #2a2e39;
+  min-height: 80vh;
+  text-align: center;
+  border-radius: 30px;
+  padding: 2rem 1rem;
+  margin: 0 auto;
+}
+
+.trendTableWrapper {
+  display: none;
 }
 
 .trendTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 2rem;
-    font-size: .8em;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  font-size: .8em;
 }
 
 .trendTable th,
 .trendTable td {
-    /* border-bottom: 1px solid #ddd; */
-    border-bottom: 1px solid #646464;
-    padding: 8px;
-    text-align: center;
+  border-bottom: 1px solid #646464;
+  padding: 8px;
+  text-align: center;
 }
 
 .trendTable th {
-    /* background-color: #575757; */
-    background-color: #131722;
+  background-color: #131722;
 }
 
 .trendTable tr:nth-child(even) {
-    /* background-color: #575757; */
-    background-color: #131722;
+  background-color: #131722;
+}
+
+.trendsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.trendCard {
+  background-color: #131722;
+  border: 1px solid #646464;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.trendCard:nth-child(even) {
+    background-color: transparent;
+    border: 1px solid #131722;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
 }
 
 .coloredSquare {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin-left: 10px;
-    border-radius: 2px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  border-radius: 2px;
 }
-  
+
+.subtable ul {
+  list-style: none;
+  padding: 0;
+}
+
 .subtable li, .coins{
     width: 90%;
     display: flex;
@@ -57,4 +93,38 @@
     display: flex;
     align-content: center;
     justify-content: center;
+}
+
+.trendsCandleNum {
+  display: flex;
+  align-items: center;
+}
+
+.timestamp {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.value {
+  font-size: 0.9em;
+}
+
+
+
+/* Media Queries */
+@media (min-width: 1024px) {
+  .trendsContainer {
+    display: none;
+  }
+  
+  .trendTableWrapper {
+    display: block;
+  }
+}
+
+@media (max-width: 1024px) {
+    .subtable {
+        margin-top: 1rem;
+        text-align: left;
+    }
 }

@@ -6,6 +6,9 @@ import RuleService from "../../../../servises/RuleService";
 import { DataInterace, IDate } from "../../../../models/IDates";
 import { comparePairsByData, comparePairsByPercent, formatDate, formatTimestamp } from "./functions";
 import { IRuleSignal } from "../../../../models/IRuleSignal";
+import 'dayjs/locale/ru';
+import CustomDatePicker from "./CustomDatePicker";
+import dayjs, { Dayjs } from "dayjs";
 
 interface timeframeInterface {
     value: string | number,
@@ -37,12 +40,23 @@ const processDataPart = (part?: string) => {
 const Dumps: FC = () => {
     const [pairs, setPairs] = useState<ITradingPair[]>([]);
     const [selectedDate, setSelectedDate] = useState(0);
+    const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs());
     const [selectedDateId, setSelectedDateId] = useState(0);
     const [dates, setDates] = useState<IDate[]>([]);
     const [selectedTimeframe, setSelectedTimeframe] = useState('all');
     const [timeframeOptions, setTimeframeOptions] = useState<timeframeInterface[]>();
     const [timeframe, setTimeframe] = useState(4);
     const [timeframes, setTimeframes] = useState(['4h', '3m']);
+    const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsDesktop(window.innerWidth >= 1024);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Function to find the signal data for a trading pair
 
@@ -248,6 +262,30 @@ const Dumps: FC = () => {
 
     }, [selectedDate, selectedDateId, selectedTimeframe, timeframe]);
 
+    const handleDateChange = (newDate: Dayjs) => {
+        const todayFormatted = formatDate(today.toISOString());
+    
+        if (newDate.format('DD/MM/YYYY') === todayFormatted) {
+            changeDate(0, 0);
+        } else {
+            const selectedTimestamp = newDate.toISOString();
+            const foundDate = dates.find((elem, index) => {
+                if (formatDate(elem.timestamp) === formatDate(selectedTimestamp)) {
+                    changeDate(elem.id, index + 1);
+                    return true;
+                }
+                return false;
+            });
+    
+            if (!foundDate) {
+                console.error('Date not found in the dates array');
+            } else {
+                setCurrentDate(newDate);
+            }
+        }
+    };
+    
+
     return (
         <div className={styles.tradingpairs}>
             <h1>Top Coins</h1>
@@ -255,7 +293,7 @@ const Dumps: FC = () => {
                 <div className={styles.buttonsContainer}>
                     <button className={timeframe === 4 ? styles.timeframeActive : styles.timeframeButton}
                         onClick={() => changeTimeframe(4)}>
-                       4h
+                        4h
                     </button>
 
                     <button className={timeframe === 1 ? styles.timeframeActive : styles.timeframeButton}
@@ -270,20 +308,10 @@ const Dumps: FC = () => {
                 </div>
                 <br></br>
 
-                <div className={styles.buttonsContainer}>
-                    <button className={selectedDate === 0 ? styles.dateActive : styles.dateButton}
-                        onClick={() => changeDate(0, 0)}>
-                        {`${today.getDate().toString().padStart(2, '0')}/${today.getMonth() + 1}/${today.getFullYear()}`}
-                    </button>
-
-                    {dates.map((elem, index) => (
-                    <button key={elem.id}
-                        className={selectedDate === index + 1 ? styles.dateActive : styles.dateButton}
-                        onClick={() => changeDate(elem.id, index + 1)}>
-                        {formatDate(elem.timestamp)}
-                    </button>
-                    ))}
+                <div>
+                    <CustomDatePicker value={currentDate} onChange={handleDateChange}/>
                 </div>
+
 
                 {selectedDate === 0 || selectedDate === 1 
                 ? (
@@ -300,7 +328,10 @@ const Dumps: FC = () => {
                 ) : null}
             </div>
 
-            <table className={styles.pairsTable}>
+            {isDesktop 
+                ?
+                (
+                <table className={styles.pairsTable}>
                 <thead>
                     <tr>
                         <th>#</th>
@@ -336,6 +367,56 @@ const Dumps: FC = () => {
                     ))}
                 </tbody>
             </table>
+            ) : (
+                <div className={styles.cardContainer}>
+                    {pairs.slice(0, 10).map((pair: ITradingPair, index) => (
+                        <div className={styles.card} key={index}>
+                            <div className={styles.cardHeader}>
+                                <span>{pair.tradingpairname}</span>
+                                <span className={styles.timestamp}>{formatTimestamp(pair.lastupdate)}</span>
+                            </div>
+                            <div className={styles.cardBody}>
+                                <div>
+                                    <strong>Цена:</strong>
+                                    <span>{pair.price}</span>
+                                </div>
+                                <div>
+                                    <strong>Change:</strong>
+                                    <span>{pair.change}</span>
+                                </div>
+                                <div>
+                                    <strong>Change %:</strong>
+                                    <span>{pair.changepercent}%</span>
+                                </div>
+                                <div>
+                                    {timeframe === 1 && (
+                                        <>
+                                            <strong>Сигнал (1ч)</strong>
+                                            <div>{processDataPart(pair.signalData?.['1h'] || 'No Data')}</div>
+                                        </>
+                                    )}
+                                    {timeframe === 4 && (
+                                        <>
+                                            <strong>Сигнал (4ч)</strong>
+                                            <div>{processDataPart(pair.signalData?.['4h'] || 'No Data')}</div>
+                                        </>
+                                    )}
+                                    {timeframe === 15 && (
+                                        <>
+                                            <strong>Сигнал (15м)</strong>
+                                            <div>{processDataPart(pair.signalData?.['15m'] || 'No Data')}</div>
+                                        </>
+                                    )}
+                                </div>
+                                <div>
+                                    <strong>Сигнал (3/5м):</strong>
+                                    <div>{processDataPart(pair.signalData?.['3m'] || 'No Data')}</div>    
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }
