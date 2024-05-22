@@ -1,6 +1,4 @@
 .tradingpairs{
-    width: 95%;
-    /* background-color: #3b3b3b; */
     background-color: #2a2e39;
     min-height: 80vh;
     text-align: center;
@@ -40,7 +38,8 @@
     list-style-type: none;
     margin: 0 auto;
     justify-content: space-around;
-    padding: 2%;   
+    padding: 2%;
+    margin-bottom: 1rem;
 }
 
 .menu li{

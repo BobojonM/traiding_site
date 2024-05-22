@@ -473,27 +473,53 @@ class RulesController {
             const tf = timeframe === '1' ? '1h' : timeframe === '4' ? '4h' : '15m';
             
             const pair = req.params.pair;
-
-            const query = `
-            (SELECT * FROM public.signals
+    
+            // First query to get the first set of signals
+            const firstQuery = `
+            SELECT * FROM public.signals
             WHERE (rule = 'NN' OR rule = 'VN') AND
-                (tradingpair = $1) AND
-                (timeframe = $2)
+                  (tradingpair = $1) AND
+                  (timeframe = $2)
             ORDER BY timestamp DESC
-            LIMIT 1)
-            UNION ALL
-            (SELECT * FROM public.signals
-            WHERE (rule <> 'NN' OR rule <> 'VN') AND
-                (tradingpair = $1) AND
-                (timeframe = '5m' OR timeframe = '3m')
-            ORDER BY timestamp DESC
-            LIMIT 1)
+            LIMIT 1
             `;
-
-            const result = await pool.query(query, [pair, tf]);
-
-            if (result.rows.length > 0) {
-                res.json(result.rows);
+    
+            const firstResult = await pool.query(firstQuery, [pair, tf]);
+            let secondQuery = '';
+    
+            if (firstResult.rows.length > 0 && firstResult.rows[0].rule === 'NN') {
+                secondQuery = `
+                SELECT * FROM public.signals
+                WHERE data = 'long' AND
+                      (tradingpair = $1) AND
+                      (timeframe = '5m' OR timeframe = '3m')
+                ORDER BY timestamp DESC
+                LIMIT 1
+                `;
+            } else {
+                secondQuery = `
+                SELECT * FROM public.signals
+                WHERE data = 'short' AND
+                      (tradingpair = $1) AND
+                      (timeframe = '5m' OR timeframe = '3m')
+                ORDER BY timestamp DESC
+                LIMIT 1
+                `;
+            }
+    
+            const secondResult = await pool.query(secondQuery, [pair]);
+            const results = [];
+    
+            // Combine results from both queries
+            if (firstResult.rows.length > 0) {
+                results.push(firstResult.rows[0]);
+            }
+            if (secondResult.rows.length > 0) {
+                results.push(secondResult.rows[0]);
+            }
+    
+            if (results.length > 0) {
+                res.json(results);
             } else {
                 res.json([]);
             }

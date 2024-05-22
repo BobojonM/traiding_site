@@ -1,3 +1,10 @@
 .page{
-    width: calc(100% - 20%);
+    width: calc(100% - 10%);
+    margin: 0 auto;
+}
+
+@media (max-width: 630px) {
+    .page {
+        width: 100%;
+    }
 }

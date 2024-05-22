@@ -1,10 +1,9 @@
 import { FC, useEffect, useState } from "react";
-import styles from './Rules.module.css'
+import styles from './Rules.module.css';
 import { IRule } from "../../../../models/IRule";
 import RuleService from "../../../../servises/RuleService";
 import RegularButton from "../../../../components/UI/Buttons/RegularButton";
 import RulesDetail from "./RulesDetail";
-
 
 const Rules: FC = () => {
     const [rules, setRules] = useState<IRule[]>([]);
@@ -20,15 +19,15 @@ const Rules: FC = () => {
         setSignalRule(ruleName);
     }
 
-    const getRules = async() => {
-        try{
+    const getRules = async () => {
+        try {
             const response = (await RuleService.getRules()).data;
             setRules(response);
             const distinctTypes = [...new Set(response.map(rule => rule.type))].filter(type => !menu.includes(type));
             setMenu([...menu, ...distinctTypes]);
-        }catch(e: any){
+        } catch (e: any) {
             console.log(e);
-          }
+        }
     }
 
     const toggleStatus = async (ruleId: number) => {
@@ -43,19 +42,18 @@ const Rules: FC = () => {
             );
         }
     }
-    
 
     useEffect(() => {
         getRules();
     }, []);
 
-    return(
+    return (
         <div className={styles.rules}>
             {signalRule ? (
                 <>
-                <h1>Сигналы для {signalRule}</h1>
-                <RegularButton action={() => setSignalRule('')}>Назад</RegularButton>
-                <RulesDetail ruleName={signalRule}/>
+                    <h1>Сигналы для {signalRule}</h1>
+                    <RegularButton action={() => setSignalRule('')}>Назад</RegularButton>
+                    <RulesDetail ruleName={signalRule} />
                 </>
             ) : (
                 <>
@@ -102,9 +100,38 @@ const Rules: FC = () => {
                                 ))}
                         </tbody>
                     </table>
+
+                    <div className={styles.cards}>
+                        {rules
+                            .filter(elem => menu[active] === 'Все' || elem.type === menu[active])
+                            .map((elem: IRule) => (
+                                <div key={elem.ruleid} className={styles.card}>
+                                    <div className={styles.cardHeader}>{elem.rulename}</div>
+                                    <div className={styles.cardContent}>
+                                        <span>Description:</span> <span className={styles.value}>{elem.description}</span>
+                                    </div>
+                                    <div className={styles.cardContent}>
+                                        <span>Type:</span> <span className={styles.value}>{elem.type}</span>
+                                    </div>
+                                    <div className={styles.cardContent}>
+                                        <span>Status:</span>
+                                        <label className={styles.switch}>
+                                            <input
+                                                type="checkbox"
+                                                checked={elem.status}
+                                                onChange={() => toggleStatus(elem.ruleid)}
+                                            />
+                                            <span className={`${styles.slider} ${styles.round}`}></span>
+                                        </label>
+                                    </div>
+                                    <div className={styles.cardActions}>
+                                        <RegularButton action={() => showSignals(elem.rulename)}>Signals</RegularButton>
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
                 </>
             )}
-
         </div>
     )
 }

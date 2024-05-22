@@ -1,6 +1,11 @@
 import { FC, useState, useRef, useEffect } from "react";
 import styles from './NavBar.module.css';
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from '@mui/icons-material/Menu';
 import NavButton from "../../../../components/UI/Buttons/NavButton";
+import { styled } from "@mui/material";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export interface Section {
     name: string;
@@ -56,6 +61,7 @@ const trends: Section[] = [
 const NavBar: FC<NavBarProps> = ({ onButtonClick }) => {
     const [active, setActive] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
 
 
@@ -77,6 +83,8 @@ const NavBar: FC<NavBarProps> = ({ onButtonClick }) => {
         
         setActive(index);
         onButtonClick(buttons[index], timeframe);
+        setDrawerOpen(false);
+        setIsModalOpen(false)
     }
 
     const handleTrendsClick = () => {
@@ -84,33 +92,54 @@ const NavBar: FC<NavBarProps> = ({ onButtonClick }) => {
     }
 
     const handleDurationSelect = (trend: Section) => {
-        setIsModalOpen(false);
         // Call changeActive with the selected duration
         changeActive(buttons.findIndex(button => button.name === 'trends'), trend);
+        setIsModalOpen(false);
+        setDrawerOpen(false);
     }
 
+    const toggleDrawer = () => {
+        setDrawerOpen(!drawerOpen);
+    }
+
+    const DrawerHeader = styled('div')(({ theme }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
+        justifyContent: 'flex-end',
+      }));
+
     return (
-        <nav className={styles.navigation}>
-            <ul>
-                {buttons.map((elem, index) => (
-                    <li key={elem.name}>
+        <div>
+            <IconButton className={styles.menuButton} onClick={toggleDrawer}>
+                <MenuIcon color="primary" className={styles.icon} fontSize="large" />
+            </IconButton>
+
+            <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+                <DrawerHeader className={styles.header}>
+                    <IconButton onClick={() => setDrawerOpen(!drawerOpen)}>
+                        <ChevronRightIcon color="primary" />
+                    </IconButton>
+                </DrawerHeader>
+                <nav className={`${styles.navigation} ${styles.drawerNavigation}`}>
+                    <ul>
+                        {buttons.map((elem, index) => (
+                        <li key={elem.name}>
                         {elem.name === 'trends' ? (
                             <>
                                 <NavButton action={() => handleTrendsClick()} isActive={index === active}>
                                     {elem.val}
                                 </NavButton>
                                 {isModalOpen && (
-                                    <div className={styles.modalWrapper}>
-                                        <div className={styles.modal} ref={modalRef}>
-                                            <ul className={styles.modalList}>
-                                                {trends.map((trend) => (
-                                                    <li key={trend.name} onClick={() => handleDurationSelect(trend)}>
-                                                        {trend.name}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <ul className={styles.addMenu}>
+                                        {trends.map((trend) => (
+                                            <li key={trend.name} onClick={() => handleDurationSelect(trend)}>
+                                                {trend.name}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </>
                         ) : (
@@ -119,9 +148,44 @@ const NavBar: FC<NavBarProps> = ({ onButtonClick }) => {
                             </NavButton>
                         )}
                     </li>
-                ))}
-            </ul>
-        </nav>
+                        ))}
+                    </ul>
+                </nav>
+            </Drawer>
+
+            <nav className={styles.navigation}>
+                <ul>
+                    {buttons.map((elem, index) => (
+                        <li key={elem.name}>
+                            {elem.name === 'trends' ? (
+                                <>
+                                    <NavButton action={() => handleTrendsClick()} isActive={index === active}>
+                                        {elem.val}
+                                    </NavButton>
+                                    {isModalOpen && (
+                                        <div className={styles.modalWrapper}>
+                                            <div className={styles.modal}>
+                                                <ul className={styles.modalList}>
+                                                    {trends.map((trend) => (
+                                                        <li key={trend.name} onClick={() => handleDurationSelect(trend)}>
+                                                            {trend.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <NavButton action={() => changeActive(index)} isActive={index === active}>
+                                    {elem.val}
+                                </NavButton>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </div>
     );
 }
 
