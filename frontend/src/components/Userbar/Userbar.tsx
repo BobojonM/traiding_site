@@ -9,6 +9,7 @@ import styles from './Userbar.module.css';
 import RegularButton from "../UI/Buttons/RegularButton";
 import { styled } from "@mui/material";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { useNavigate } from "react-router-dom";
 
 interface UserbarInterface {
     openSetting: () => void;
@@ -25,10 +26,18 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const Userbar: FC<UserbarInterface> = ({ openSetting }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
     const toggleDrawer = () => setIsOpen(!isOpen);
 
     const user = useSelector((state: RootState) => state.toolkit.user);
     const { logout } = useAuth();
+
+    const handleLogout = async () => {
+        await logout()
+        .then(() => {
+            navigate('/');
+        });
+    };
 
     return (
         <>
@@ -53,7 +62,7 @@ const Userbar: FC<UserbarInterface> = ({ openSetting }) => {
                             </div>
                         )}
 
-                        <button onClick={() => logout()} style={{ marginTop: '1rem' }}>Выйти</button>
+                        <button onClick={handleLogout} style={{ marginTop: '1rem' }}>Выйти</button>
                     </div>
                 </div>
             </Drawer>
