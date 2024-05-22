@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: '/var/www/yerlan.space/dist'
+    outDir: '/var/www/flowcapital.ai/dist'
   }
 })
