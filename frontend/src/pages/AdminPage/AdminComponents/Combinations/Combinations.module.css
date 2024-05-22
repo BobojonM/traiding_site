@@ -1,11 +1,9 @@
 .combinations{
-    width: 95%;
-    /* background-color: #3b3b3b; */
     background-color: #2a2e39;
     min-height: 80vh;
     text-align: center;
     border-radius: 30px;
-    padding: 1%;
+    padding: 1rem;
     margin: 0 auto;
 }
 
@@ -66,7 +64,7 @@ caption{
 }
 
 .list {
-    width: 70%;
+    /* width: 70%; */
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
@@ -111,4 +109,117 @@ input:checked + .slider {
 
 input:checked + .slider:before {
     transform: translateX(16px);
+}
+
+
+.cards {
+    display: none;
+    margin-top: 2rem;
+}
+
+.card {
+    background-color: #2a2e39;
+    border: 1px solid #646464;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    padding: 1.5rem;
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.cardHeader {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.cardContent {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: #ddd;
+}
+
+.cardContent span {
+    font-weight: bold;
+    color: #fff;
+}
+
+.cardAction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px; /* Adjust as needed */
+}
+
+.gridItem {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    border-bottom: 4px dotted rgb(175, 175, 175);
+}
+
+.selectContainer {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem auto;
+  }
+  
+  .selectContainer span {
+    color: #ffffff;
+    font-size: .9rem;
+    margin-bottom: 10px;
+  }
+  
+  .selectContainer select {
+    background-color: #131722;
+    color: #ffffff;
+    border: none;
+    padding: .7rem 1.5rem;
+    border-radius: 5px;
+    font-size: .9rem;
+    outline: none;
+  }
+
+/* Media query to hide table and show cards */
+@media (max-width: 1080px) {
+    .combTable {
+        display: none;
+    }
+
+    .cards {
+        display: block;
+    }
+}
+
+@media (max-width: 560px) {
+    .menu {
+        display: none;
+    }
+
+    .selectContainer {
+        display: flex;
+    }
+
+    .list {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        justify-items: center;
+        gap: 1rem;
+        grid-gap: 1rem;
+        grid-template-columns: 20% 1fr;
+        text-align: left; /* Align text to the left for better readability */
+        border: none;
+    }
+
 }

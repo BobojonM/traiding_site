@@ -8,7 +8,15 @@ const LoginForm: FC = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
+
+    const handleLogin = async () => {
+        await login(email, password);
+    };
+
+    const handleRegister = async () => {
+        await register(email, password);
+    };
+
     return(
         <div className={styles.auth}>
             <div className={styles.authContent}>
@@ -27,14 +35,14 @@ const LoginForm: FC = () => {
                 />
                 <div className={styles.buttons}>
                     <div>
-                        <AuthButton action={() => login(email, password)}>
+                        <AuthButton action={handleLogin}>
                             Войти
                         </AuthButton>
                     </div>
                     <div>
-                        <AuthButton action={() => register(email, password)}>
-                        Зарегистрироваться
-                    </AuthButton>
+                        <AuthButton action={handleRegister}>
+                            Зарегистрироваться
+                        </AuthButton>
                     </div>
 
                 </div>

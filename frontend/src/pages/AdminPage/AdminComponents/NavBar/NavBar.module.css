@@ -7,6 +7,7 @@
     padding: 0;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 50px;
 }
   
@@ -62,4 +63,55 @@
   .modalList li:hover {
     text-decoration: underline;
   }
+
+.menuButton {
+  display: none !important;
+  position: fixed !important;
+  top: .5rem;
+  left: 0;
+  width: 4rem;
+  height: 4rem;
+}
+
+.header {
+  background-color: #2a2e39;
+}
+
+
+.drawerNavigation {
+  background-color: #2a2e39;
+  height: 100vh;
+}
+
+
+@media (max-width: 930px) {
+  .menuButton {
+      display: block !important;
+  }
+
+  .navigation ul {
+      display: none;
+  }
+
+  .drawerNavigation ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .addMenu {
+    margin-top: .5rem;
+    padding-top: 1rem !important;
+    border-top: 1px dashed white;
+  }
+
+  .addMenu li {
+    color: white;
+    font-size: .7rem;
+    cursor: pointer;
+  }
   
+}
